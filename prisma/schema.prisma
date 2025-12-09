@@ -6,8 +6,9 @@ datasource db {
   provider = "postgresql"
 }
 
-model PlayingWithNeon {
-  id    Int    @id @default(autoincrement())
-  name  String
-  value Float
+model Item {
+  id        String   @id
+  data      Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
