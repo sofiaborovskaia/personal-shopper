@@ -12,7 +12,7 @@ export default async function ItemsPage() {
 
 	return (
 		<div className={styles.container}>
-			<h1 className={styles.title}>All Items</h1>
+			<h1 className={styles.title}>All products</h1>
 			<div className={styles.grid}>
 				{items.map((item) => {
 					const data = item.data as ProductData;
