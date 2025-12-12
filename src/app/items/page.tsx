@@ -26,7 +26,6 @@ export default async function ItemsPage() {
 									: data.variants[0].price_cents / 100
 								).toFixed(2)}
 							</p>
-							<p className={styles.id}>ID: {item.id}</p>
 						</div>
 					);
 				})}
