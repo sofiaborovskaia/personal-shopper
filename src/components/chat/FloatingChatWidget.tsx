@@ -41,7 +41,7 @@ export default function FloatingChatWidget() {
 		setLoading(true);
 
 		try {
-			const res = await fetch("/api/chat", {
+			const results = await fetch("/api/chat", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -49,7 +49,7 @@ export default function FloatingChatWidget() {
 				body: JSON.stringify({ message: userMessage.content }),
 			});
 
-			const data = await res.json();
+			const data = await results.json();
 
 			if (data.success) {
 				const assistantMessage: Message = {

@@ -31,25 +31,22 @@ export async function POST(request: Request) {
 			)
 			.join("\n");
 
-		console.log(
-			`Sending ${availableProducts.slice(0, 20).length} products to AI`,
-		);
-
 		// 🎯 Updated system message
 		const systemMessage = `You are a helpful personal shopping assistant. 
 
-Your job is to recommend products from the available inventory based on what the customer needs.
+		Your job is to recommend products from the available inventory based on what the customer needs.
 
-Here are the products currently in stock that you can recommend:
-${productSummary}
+		Here are the products currently in stock that you can recommend:
+		${productSummary}
 
-When making recommendations:
-- ONLY recommend products from the list above
-- Suggest 2-3 specific products that match their needs
-- Explain WHY each product fits their request
-- Mention the price, available colors, and stock level
-- If stock is low (under 20), mention "limited stock"
-- Be friendly and enthusiastic!`;
+		When making recommendations:
+		- ONLY recommend products from the list above
+		- Suggest 2-3 specific products that match their needs
+		- Explain WHY each product fits their request
+		- Mention the price, available colors, and stock level
+		- If stock is low (under 20), mention "limited stock"
+		- Be friendly and enthusiastic!`;
+
 		const completion = await openai.chat.completions.create({
 			model: "gpt-3.5-turbo",
 			messages: [
