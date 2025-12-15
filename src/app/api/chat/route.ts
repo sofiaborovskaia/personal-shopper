@@ -14,18 +14,20 @@ export async function POST(request: Request) {
 
 		// Filter to only AVAILABLE products
 		// In a real app, you'd do smarter filtering based on the user's message
-		const availableProducts = clothingItems.filter((item) => item.available);
+		const availableProducts = clothingItems.filter(
+			(item) => item.data.available,
+		);
 
 		// Convert products to text, now including stock status
 		const productSummary = availableProducts
 			.slice(0, 20) //  Limit to first 20 products to save tokens
 			.map(
 				(item) =>
-					`- ${item.title}: ${item.description} (€${
-						item.price_cents / 100
-					}, colors: ${item.colors.join(", ")}, category: ${
-						item.category
-					}, stock: ${item.stock})`,
+					`- ${item.data.title}: ${item.data.description} (€${
+						item.data.price_cents / 100
+					}, colors: ${item.data.colors.join(", ")}, category: ${
+						item.data.category
+					}, stock: ${item.data.stock})`,
 			)
 			.join("\n");
 
