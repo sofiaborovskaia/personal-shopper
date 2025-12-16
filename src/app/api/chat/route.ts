@@ -15,7 +15,6 @@ export async function POST(request: Request) {
 		console.log("Conversation history length:", history.length);
 
 		// Filter to only AVAILABLE products
-		// In a real app, you'd do smarter filtering based on the user's message
 		const availableProducts = clothingItems.filter(
 			(item) => item.data.available,
 		);
@@ -62,7 +61,7 @@ export async function POST(request: Request) {
 	- If stock is low (under 20), mention "limited stock"
 	- Be friendly but honest about our inventory limitations`;
 		const completion = await openai.chat.completions.create({
-			model: "gpt-4o-mini", // More reliable than gpt-3.5-turbo for following instructions
+			model: "gpt-4o-mini",
 			messages: [
 				{
 					role: "system",
@@ -74,7 +73,7 @@ export async function POST(request: Request) {
 					content: userMessage,
 				},
 			],
-			temperature: 0.3, // Lower temperature = more focused and less creative/hallucinatory
+			temperature: 0.3,
 		});
 
 		const aiResponse = completion.choices[0].message.content;
