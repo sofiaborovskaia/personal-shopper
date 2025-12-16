@@ -8,9 +8,10 @@
 	padding: 0.6rem;
 	background: transparent;
 	color: var(--text-dark);
+	font-weight: 600;
 	border: none;
 	cursor: pointer;
-	font-size: 1.2rem;
+	font-size: 0.8rem;
 
 	display: flex;
 	align-items: center;

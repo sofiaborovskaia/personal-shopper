@@ -25,6 +25,8 @@
 	padding: 1.5rem;
 	transition: all 0.3s ease-in-out;
 	cursor: pointer;
+	text-decoration: none;
+	display: block;
 }
 
 .card:hover {

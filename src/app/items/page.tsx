@@ -1,8 +1,10 @@
 import { getItems } from "@/lib/items";
+import Link from "next/link";
 import styles from "./styles.module.css";
 
 type ProductData = {
 	title: string;
+	slug: string;
 	price_cents?: number;
 	variants: Array<{ price_cents: number }>;
 };
@@ -17,7 +19,11 @@ export default async function ItemsPage() {
 				{items.map((item) => {
 					const data = item.data as ProductData;
 					return (
-						<div key={item.id} className={styles.card}>
+						<Link
+							key={item.id}
+							href={`/items/${data.slug}`}
+							className={styles.card}
+						>
 							<h2>{data.title}</h2>
 							<p className={styles.value}>
 								€
@@ -26,7 +32,7 @@ export default async function ItemsPage() {
 									: data.variants[0].price_cents / 100
 								).toFixed(2)}
 							</p>
-						</div>
+						</Link>
 					);
 				})}
 			</div>

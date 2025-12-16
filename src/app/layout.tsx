@@ -26,7 +26,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable}`}>
-				{children}
+				<main style={{ padding: "30px" }}>{children}</main>
 				<FloatingChatWidget />
 			</body>
 		</html>

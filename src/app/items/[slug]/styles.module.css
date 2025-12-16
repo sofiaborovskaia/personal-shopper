@@ -1,0 +1,108 @@
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 2rem;
+
+	background: var(--text-light);
+
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+}
+
+.sizeSelector select {
+	color: var(--text-dark);
+}
+
+.productWrapper {
+	display: flex;
+	flex-direction: row;
+	gap: 2rem;
+}
+
+.productDetails {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.title {
+	font-size: 2rem;
+	font-weight: 600;
+}
+
+.subtitle {
+	font-size: 0.8rem;
+	margin: 0;
+}
+
+.price {
+	font-size: 1.2rem;
+	font-style: italic;
+}
+
+.sizeSelector,
+.colorSelector {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.colorSwatches {
+	display: flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+
+.colorSwatches button {
+	padding: 0.25rem 0.5rem;
+	border-radius: 4px;
+	line-height: 1.1;
+	border: none;
+	background: var(--text-dark);
+	color: var(--text-light);
+	cursor: pointer;
+}
+
+.buyButton {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--text-dark);
+	padding: 0.5rem 1rem;
+	background-color: var(--background);
+	cursor: pointer;
+	border: none;
+	max-width: fit-content;
+}
+
+.backButton {
+	font-size: 0.75rem;
+	margin-bottom: 1rem;
+	display: inline-block;
+}
+
+.description {
+	font-weight: 0.8rem;
+}
+
+.description h2 {
+	font-size: 1.25rem;
+	margin: 0 0 0.75rem 0;
+}
+
+.description p {
+	margin: 0;
+	line-height: 1.6;
+}
+
+.detail {
+	display: flex;
+	gap: 0.5rem;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid var(--text-dark);
+}
+
+.label {
+	font-weight: 600;
+	min-width: 150px;
+}

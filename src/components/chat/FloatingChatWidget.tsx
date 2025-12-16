@@ -41,7 +41,7 @@ export default function FloatingChatWidget() {
 		setLoading(true);
 
 		try {
-			const results = await fetch("/api/chat", {
+			const res = await fetch("/api/chat", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -49,7 +49,7 @@ export default function FloatingChatWidget() {
 				body: JSON.stringify({ message: userMessage.content }),
 			});
 
-			const data = await results.json();
+			const data = await res.json();
 
 			if (data.success) {
 				const assistantMessage: Message = {
@@ -190,7 +190,7 @@ export default function FloatingChatWidget() {
 				aria-label="Open chat"
 			>
 				{/* 💬 */}
-				Ask me
+				Ask me!
 				{messages.length > 0 && (
 					<span className={styles.badge}>{messages.length}</span>
 				)}
