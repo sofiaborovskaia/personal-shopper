@@ -9,8 +9,10 @@ export async function POST(request: Request) {
 
 		const body = await request.json();
 		const userMessage = body.message;
+		const history = body.history || [];
 
 		console.log("Received message:", userMessage);
+		console.log("Conversation history length:", history.length);
 
 		// Filter to only AVAILABLE products
 		// In a real app, you'd do smarter filtering based on the user's message
@@ -31,35 +33,48 @@ export async function POST(request: Request) {
 			)
 			.join("\n");
 
-		// 🎯 Updated system message
-		const systemMessage = `You are a helpful personal shopping assistant. 
+		// Get unique categories from available products
+		const availableCategories = [
+			...new Set(availableProducts.map((item) => item.data.category)),
+		];
 
-		Your job is to recommend products from the available inventory based on what the customer needs.
+		const systemMessage = `You are a helpful personal shopping assistant for a clothing store.
 
-		Here are the products currently in stock that you can recommend:
-		${productSummary}
+	CRITICAL RULES - YOU MUST FOLLOW THESE:
+	1. We ONLY sell these categories: ${availableCategories.join(", ")}
+	2. We DO NOT sell any other types of clothing
+	3. If a customer asks for something we don't have, say: "I'm sorry, we currently only carry ${availableCategories.join(
+		", ",
+	)}. We don't have [requested item] in stock at the moment."
+	4. NEVER make up or invent products
+	5. ONLY recommend items from the exact list below
 
-		When making recommendations:
-		- ONLY recommend products from the list above
-		- Suggest 2-3 specific products that match their needs
-		- Explain WHY each product fits their request
-		- Mention the price, available colors, and stock level
-		- If stock is low (under 20), mention "limited stock"
-		- Be friendly and enthusiastic!`;
+	Here are ALL the products we have in stock:
+	${productSummary}
 
+	When making recommendations:
+	- Check if the requested item category exists in our inventory first
+	- If it doesn't exist, apologize and explain what we do have
+	- Only recommend actual products from the list above
+	- Suggest 2-3 specific products that match their needs
+	- Explain WHY each product fits their request
+	- Mention the price, available colors, and stock level
+	- If stock is low (under 20), mention "limited stock"
+	- Be friendly but honest about our inventory limitations`;
 		const completion = await openai.chat.completions.create({
-			model: "gpt-3.5-turbo",
+			model: "gpt-4o-mini", // More reliable than gpt-3.5-turbo for following instructions
 			messages: [
 				{
 					role: "system",
 					content: systemMessage,
 				},
+				...history,
 				{
 					role: "user",
 					content: userMessage,
 				},
 			],
-			temperature: 0.7,
+			temperature: 0.3, // Lower temperature = more focused and less creative/hallucinatory
 		});
 
 		const aiResponse = completion.choices[0].message.content;
