@@ -46,12 +46,12 @@ export default function FloatingChatWidget() {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ 
+				body: JSON.stringify({
 					message: userMessage.content,
-					history: messages.map(msg => ({
+					history: messages.map((msg) => ({
 						role: msg.role,
-						content: msg.content
-					}))
+						content: msg.content,
+					})),
 				}),
 			});
 
