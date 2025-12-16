@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
 import styles from "./FloatingChatWidget.module.css";
 
 type Message = {
@@ -49,11 +50,9 @@ function convertProductNamesToLinks(
 		const slug = productMap[matchedText.toLowerCase()];
 		if (slug) {
 			parts.push(
-				<a
+				<Link
 					key={`link-${index}`}
 					href={`/items/${slug}`}
-					target="_blank"
-					rel="noopener noreferrer"
 					style={{
 						color: "var(--foreground)",
 						textDecoration: "underline",
@@ -61,7 +60,7 @@ function convertProductNamesToLinks(
 					}}
 				>
 					{matchedText}
-				</a>,
+				</Link>,
 			);
 		} else {
 			parts.push(matchedText);
