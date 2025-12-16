@@ -8,7 +8,75 @@ type Message = {
 	role: "user" | "assistant";
 	content: string;
 	timestamp: Date;
+	productMap?: Record<string, string>;
 };
+
+// Function to convert product names to links
+function convertProductNamesToLinks(
+	text: string,
+	productMap?: Record<string, string>,
+): React.ReactNode {
+	if (!productMap) return text;
+
+	const parts: React.ReactNode[] = [];
+	let lastIndex = 0;
+
+	// Sort product names by length (longest first) to match longer names before shorter ones
+	const sortedProducts = Object.keys(productMap).sort(
+		(a, b) => b.length - a.length,
+	);
+
+	// Create a regex pattern that matches any product name (case-insensitive)
+	const pattern = new RegExp(
+		`(${sortedProducts
+			.map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+			.join("|")})`,
+		"gi",
+	);
+
+	const matches = Array.from(text.matchAll(pattern));
+
+	matches.forEach((match, index) => {
+		const matchedText = match[0];
+		const matchIndex = match.index!;
+
+		// Add text before the match
+		if (matchIndex > lastIndex) {
+			parts.push(text.substring(lastIndex, matchIndex));
+		}
+
+		// Add the link
+		const slug = productMap[matchedText.toLowerCase()];
+		if (slug) {
+			parts.push(
+				<a
+					key={`link-${index}`}
+					href={`/items/${slug}`}
+					target="_blank"
+					rel="noopener noreferrer"
+					style={{
+						color: "var(--foreground)",
+						textDecoration: "underline",
+						fontWeight: "500",
+					}}
+				>
+					{matchedText}
+				</a>,
+			);
+		} else {
+			parts.push(matchedText);
+		}
+
+		lastIndex = matchIndex + matchedText.length;
+	});
+
+	// Add remaining text
+	if (lastIndex < text.length) {
+		parts.push(text.substring(lastIndex));
+	}
+
+	return parts.length > 0 ? parts : text;
+}
 
 export default function FloatingChatWidget() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -63,6 +131,7 @@ export default function FloatingChatWidget() {
 					role: "assistant",
 					content: data.message,
 					timestamp: new Date(),
+					productMap: data.productMap,
 				};
 				setMessages((prev) => [...prev, assistantMessage]);
 			} else {
@@ -134,7 +203,14 @@ export default function FloatingChatWidget() {
 								<div className={styles.avatar}>🤖</div>
 							)}
 							<div className={styles.messageContent}>
-								<div className={styles.messageText}>{message.content}</div>
+								<div className={styles.messageText}>
+									{message.role === "assistant"
+										? convertProductNamesToLinks(
+												message.content,
+												message.productMap,
+										  )
+										: message.content}
+								</div>
 							</div>
 						</div>
 					))}

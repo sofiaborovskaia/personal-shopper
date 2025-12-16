@@ -30,13 +30,16 @@ export async function POST(request: Request) {
 						item.data.category
 					}, stock: ${item.data.stock})`,
 			)
-			.join("\n");
+			.join("\n"); // Create a mapping of product titles to slugs directly from data
+		const productMap = availableProducts.reduce((acc, item) => {
+			acc[item.data.title.toLowerCase()] = item.data.slug;
+			return acc;
+		}, {} as Record<string, string>);
 
 		// Get unique categories from available products
 		const availableCategories = [
 			...new Set(availableProducts.map((item) => item.data.category)),
 		];
-
 		const systemMessage = `You are a helpful personal shopping assistant for a clothing store.
 
 	CRITICAL RULES - YOU MUST FOLLOW THESE:
@@ -56,10 +59,12 @@ export async function POST(request: Request) {
 	- If it doesn't exist, apologize and explain what we do have
 	- Only recommend actual products from the list above
 	- Suggest 2-3 specific products that match their needs
+	- When mentioning a product name, use EXACTLY the product title as written in the list (e.g., "All-Weather Field Jacket")
 	- Explain WHY each product fits their request
-	- Mention the price, available colors, and stock level
+	- Mention the price and available colors
 	- If stock is low (under 20), mention "limited stock"
 	- Be friendly but honest about our inventory limitations`;
+
 		const completion = await openai.chat.completions.create({
 			model: "gpt-4o-mini",
 			messages: [
@@ -81,6 +86,7 @@ export async function POST(request: Request) {
 		return Response.json({
 			success: true,
 			message: aiResponse,
+			productMap,
 		});
 	} catch (error) {
 		console.error("Error calling OpenAI:", error);
