@@ -50,6 +50,7 @@ export async function POST(request: Request) {
 	)}. We don't have [requested item] in stock at the moment."
 	4. NEVER make up or invent products
 	5. ONLY recommend items from the exact list below
+	6. However, if user asks for a general recommendation (e.g., "I need a summer outfit", "Recommend some trendy clothes"), suggest items from the list that would fit that need based on the context
 
 	Here are ALL the products we have in stock:
 	${productSummary}
