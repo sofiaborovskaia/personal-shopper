@@ -1,5 +1,6 @@
 import OpenAI from "openai";
-import clothingItems from "@/data/mock-products.json";
+import prisma from "@/lib/prisma";
+import type { ProductItem } from "@/types/product";
 
 export async function POST(request: Request) {
 	try {
@@ -11,13 +12,10 @@ export async function POST(request: Request) {
 		const userMessage = body.message;
 		const history = body.history || [];
 
-		console.log("Received message:", userMessage);
-		console.log("Conversation history length:", history.length);
+		const items = (await prisma.item.findMany()) as unknown as ProductItem[];
 
 		// Filter to only AVAILABLE products
-		const availableProducts = clothingItems.filter(
-			(item) => item.data.available,
-		);
+		const availableProducts = items.filter((item) => item.data.available);
 
 		// Convert products to text, now including stock status
 		const productSummary = availableProducts
