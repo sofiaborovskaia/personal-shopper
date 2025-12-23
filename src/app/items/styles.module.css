@@ -2,6 +2,7 @@
 	margin: 60px auto;
 	min-height: 100vh;
 	max-width: 900px;
+	color: var(--grey-1);
 }
 
 .title {
@@ -9,19 +10,17 @@
 	font-weight: bold;
 	margin-bottom: 2.5rem;
 	text-align: center;
-	color: var(--text-dark);
 }
 
 .grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 	gap: 3px;
-	background-color: var(--text-dark);
 }
 
 .card {
 	background: var(--text-light);
-	color: var(--text-dark);
+	color: var(--grey-1);
 	padding: 1.5rem;
 	transition: all 0.3s ease-in-out;
 	cursor: pointer;

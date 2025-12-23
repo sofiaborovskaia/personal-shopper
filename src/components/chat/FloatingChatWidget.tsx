@@ -54,7 +54,7 @@ function convertProductNamesToLinks(
 					key={`link-${index}`}
 					href={`/items/${slug}`}
 					style={{
-						color: "var(--foreground)",
+						color: "var(--magenta-2)",
 						textDecoration: "underline",
 						fontWeight: "500",
 					}}
@@ -270,8 +270,18 @@ export default function FloatingChatWidget() {
 				}`}
 				aria-label="Open chat"
 			>
-				{/* 💬 */}
-				Ask me!
+				<svg
+					width="32"
+					height="32"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					strokeWidth="2"
+					strokeLinecap="round"
+					strokeLinejoin="round"
+				>
+					<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+				</svg>
 				{messages.length > 0 && (
 					<span className={styles.badge}>{messages.length}</span>
 				)}

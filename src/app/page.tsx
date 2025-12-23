@@ -5,14 +5,20 @@ export default function Home() {
 	return (
 		<div className={styles.page}>
 			<div className={styles.welcomeContainer}>
-				<h1>🛍 Welcome to our store!</h1>
-				<p>
-					Remember, you can always ask our AI assistant if you need help finding
-					the perfect item. Just click the &quot;Ask me!&quot; button at the
-					bottom right corner.
-				</p>
+				<div>
+					<p className={styles.title}>
+						Step into a world where <i>AI meets intuition</i>. Your personal
+						shopping companion is ready to guide you through curated
+						collections, transforming browsing into discovery.
+					</p>
+					<p className={styles.subtitle}>
+						Whether you're seeking the perfect product or need tailored
+						recommendations, our AI assistant is here to make your experience
+						seamless and enjoyable.
+					</p>
+				</div>
 				<Link href="/items" className={styles.enterButton}>
-					Enter the store
+					Enter the Store
 				</Link>
 			</div>
 		</div>
