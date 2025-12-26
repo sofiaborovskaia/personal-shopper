@@ -166,7 +166,7 @@ export default function FloatingChatWidget() {
 			>
 				<div className={styles.chatHeader}>
 					<div>
-						<h3>Shopping Assistant</h3>
+						<h3>AI Shopping Assistant</h3>
 					</div>
 					<button
 						onClick={() => setIsOpen(false)}
@@ -181,10 +181,9 @@ export default function FloatingChatWidget() {
 					{messages.length === 0 && (
 						<div className={styles.emptyState}>
 							<div className={styles.avatarLarge}>💬</div>
-							<h4>Hi!</h4>
 							<p>
 								Ask me anything about our products and I&apos;ll help you find
-								what you&apos;re looking for!
+								what you&apos;re looking for.
 							</p>
 						</div>
 					)}
@@ -271,20 +270,16 @@ export default function FloatingChatWidget() {
 				aria-label="Open chat"
 			>
 				<svg
-					width="32"
-					height="32"
+					width="100%"
+					height="100%"
 					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="2"
+					fill="white"
 					strokeLinecap="round"
 					strokeLinejoin="round"
 				>
 					<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
 				</svg>
-				{messages.length > 0 && (
-					<span className={styles.badge}>{messages.length}</span>
-				)}
+				<span className={styles.buttonText}>Ask AI</span>
 			</button>
 		</>
 	);
