@@ -20,28 +20,3 @@
 .welcomeContainer .subtitle {
 	margin-bottom: 4rem;
 }
-
-.enterButton {
-	display: block;
-	margin-inline: auto;
-	font-size: 1rem;
-	max-width: fit-content;
-
-	border-radius: 100px;
-	padding: 0.75rem 2rem;
-	background-color: transparent;
-	border: 1px solid var(--magenta-2);
-	color: var(--magenta-2);
-	box-shadow: 0 8px 32px var(--magenta-2);
-	filter: drop-shadow(0 0 1rem var(--magenta-1));
-	font-weight: 500;
-
-	transform: translateY(0px);
-	transition: all 0.3s ease;
-	cursor: pointer;
-}
-
-.enterButton:hover {
-	box-shadow: 0 8px 12px var(--magenta-2);
-	transform: translateY(2px);
-}

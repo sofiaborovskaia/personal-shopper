@@ -17,7 +17,7 @@ export default function Home() {
 						seamless and enjoyable.
 					</p>
 				</div>
-				<Link href="/items" className={styles.enterButton}>
+				<Link href="/items" className="neonButton">
 					Enter the Store
 				</Link>
 			</div>
