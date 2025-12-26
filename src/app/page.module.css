@@ -12,7 +12,7 @@
 }
 
 .welcomeContainer .title {
-	font-family: "Frog Serif", serif;
+	font-family: var(--font-frog-serif), serif;
 	font-size: 2.5rem;
 	margin-bottom: 2rem;
 }
