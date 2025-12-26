@@ -36,7 +36,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
 	// Randomly select one of the three generic images
 	const imageNumber = Math.floor(Math.random() * 3) + 1;
-	const imageSrc = `/${imageNumber}.jpg`;
+	const imageSrc = `/productPictures/${imageNumber}.jpg`;
 
 	return (
 		<div className={styles.container}>
