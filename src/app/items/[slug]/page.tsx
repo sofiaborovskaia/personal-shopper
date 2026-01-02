@@ -4,19 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "./styles.module.css";
 
-type ProductData = {
-	title: string;
-	subtitle?: string;
-	description?: string;
-	brand?: string;
-	price_cents?: number;
-	variants: Array<{ price_cents: number }>;
-	available_sizes?: string[];
-	colors?: string[];
-	materials?: string[];
-	stock?: number;
-};
-
 type PageProps = {
 	params: Promise<{ slug: string }>;
 };
@@ -29,11 +16,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 		notFound();
 	}
 
-	const data = item.data as ProductData;
-	const price = data.price_cents
-		? data.price_cents / 100
-		: data.variants[0].price_cents / 100;
-
+	const price = item.priceCents / 100;
 	// Randomly select one of the three generic images
 	const imageNumber = Math.floor(Math.random() * 3) + 1;
 	const imageSrc = `/productPictures/${imageNumber}.jpg`;
@@ -48,7 +31,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 				<div className={styles.productImage}>
 					<Image
 						src={imageSrc}
-						alt={data.title}
+						alt={item.title}
 						width={300}
 						height={400}
 						className={styles.image}
@@ -61,9 +44,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
 
 				<div className={styles.productDetails}>
 					<div className={styles.header}>
-						<h1 className={styles.title}>{data.title}</h1>
-						{data.subtitle && (
-							<p className={styles.subtitle}>{data.subtitle}</p>
+						<h1 className={styles.title}>{item.title}</h1>
+						{item.subtitle && (
+							<p className={styles.subtitle}>{item.subtitle}</p>
 						)}
 					</div>
 
@@ -71,55 +54,51 @@ export default async function ProductDetailPage({ params }: PageProps) {
 						<span className={styles.price}>€{price.toFixed(2)}</span>
 					</div>
 
-					{data.available_sizes && data.available_sizes.length > 0 && (
-						<div className={styles.sizeSelector}>
-							<label htmlFor="size">Size:</label>
-							<select id="size">
-								{data.available_sizes.map((size) => (
-									<option key={size} value={size}>
-										{size}
-									</option>
-								))}
-							</select>
-						</div>
-					)}
+					<div className={styles.sizeSelector}>
+						<label htmlFor="size">Size:</label>
+						<select id="size">
+							{item.sizes.map((size) => (
+								<option key={size} value={size}>
+									{size}
+								</option>
+							))}
+						</select>
+					</div>
 
-					{data.colors && data.colors.length > 0 && (
-						<div className={styles.colorSelector}>
-							<label>Color:</label>
-							<div className={styles.colorSwatches}>
-								{data.colors.map((color) => (
-									<button
-										key={color}
-										className={styles.colorSwatch}
-										title={color}
-									>
-										{color}
-									</button>
-								))}
-							</div>
+					<div className={styles.colorSelector}>
+						<label>Color:</label>
+						<div className={styles.colorSwatches}>
+							{item.colors.map((color) => (
+								<button
+									key={color}
+									className={styles.colorSwatch}
+									title={color}
+								>
+									{color}
+								</button>
+							))}
 						</div>
-					)}
+					</div>
 
 					<button className={styles.buyButton}>Buy Now</button>
 
-					{data.description && (
+					{item.description && (
 						<div className={styles.description}>
-							<p>{data.description}</p>
+							<p>{item.description}</p>
 						</div>
 					)}
 
-					{data.brand && (
+					{item.brand && (
 						<div className={styles.detail}>
 							<span className={styles.label}>Brand:</span>
-							<span>{data.brand}</span>
+							<span>{item.brand}</span>
 						</div>
 					)}
 
-					{data.materials && data.materials.length > 0 && (
+					{item.materials && item.materials.length > 0 && (
 						<div className={styles.detail}>
 							<span className={styles.label}>Materials:</span>
-							<span>{data.materials.join(", ")}</span>
+							<span>{item.materials.join(", ")}</span>
 						</div>
 					)}
 				</div>

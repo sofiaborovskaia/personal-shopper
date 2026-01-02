@@ -7,8 +7,22 @@ datasource db {
 }
 
 model Item {
-  id        String   @id
-  data      Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  sku         String   @unique
+  title       String
+  subtitle    String
+  slug        String   @unique
+  description String
+  type        String
+  brand       String
+  category    String
+  priceCents  Int      @map("price_cents")
+  currency    String
+  available   Boolean
+  stock       Int
+  colors      String[]
+  sizes       String[]
+  materials   String[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 }
