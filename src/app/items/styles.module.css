@@ -9,38 +9,57 @@
 	font-size: 2.5rem;
 	font-weight: bold;
 	margin-bottom: 2.5rem;
-	color: var(--magenta-2);
+	color: var(--white);
 	text-align: center;
 }
 
 .grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-	gap: 3px;
+	gap: 8px;
 }
 
 .card {
 	background: var(--text-light);
 	color: var(--grey-1);
-	padding: 1.5rem;
 	transition: all 0.3s ease-in-out;
 	cursor: pointer;
 	text-decoration: none;
-	display: block;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 .card:hover {
 	transform: translateY(-4px);
 }
 
+.imageContainer {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1 / 1;
+	background: var(--grey-1);
+	overflow: hidden;
+}
+
+.image {
+	object-fit: cover;
+}
+
+.cardContent {
+	padding: 1.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
 .card h2 {
 	font-size: 1.25rem;
 	font-weight: 600;
-	margin: 0 0 0.75rem 0;
+	margin: 0;
 	line-height: 1.4;
 }
 
 .value {
 	font-size: 1rem;
-	margin: 0.5rem 0;
 }

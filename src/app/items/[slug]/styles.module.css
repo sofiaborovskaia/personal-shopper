@@ -1,7 +1,7 @@
 .container {
-	max-width: 800px;
+	max-width: 900px;
 	margin: 0 auto;
-	padding: 2rem;
+	padding: 3rem 3rem 5rem 3rem;
 
 	background: var(--text-light);
 	color: var(--grey-1);
@@ -13,14 +13,26 @@
 
 .productWrapper {
 	display: flex;
-	flex-direction: row;
 	gap: 2rem;
+	flex-wrap: wrap;
 }
 
 .productDetails {
 	display: flex;
 	flex-direction: column;
 	gap: 1.5rem;
+
+	flex: 1;
+}
+
+.productImage {
+	display: flex;
+	max-width: 100%;
+}
+
+.productImage img {
+	object-fit: cover;
+	max-width: 100%;
 }
 
 .title {

@@ -49,12 +49,10 @@ export default async function ProductDetailPage({ params }: PageProps) {
 					<Image
 						src={imageSrc}
 						alt={data.title}
-						width={600}
-						height={800}
+						width={300}
+						height={400}
 						className={styles.image}
 						style={{
-							width: "100%",
-							height: "auto",
 							objectFit: "cover",
 						}}
 						priority
