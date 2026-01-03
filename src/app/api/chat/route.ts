@@ -1,6 +1,5 @@
 import OpenAI from "openai";
 import prisma from "@/lib/prisma";
-import type { ProductItem } from "@/types/product";
 
 export async function POST(request: Request) {
 	try {
@@ -12,31 +11,27 @@ export async function POST(request: Request) {
 		const userMessage = body.message;
 		const history = body.history || [];
 
-		const items = (await prisma.item.findMany()) as unknown as ProductItem[];
-
-		// Filter to only AVAILABLE products
-		const availableProducts = items.filter((item) => item.data.available);
+		const items = await prisma.item.findMany({ where: { available: true } });
 
 		// Convert products to text, now including stock status
-		const productSummary = availableProducts
-			.slice(0, 20) //  Limit to first 20 products to save tokens
+		const productSummary = items
 			.map(
 				(item) =>
-					`- ${item.data.title}: ${item.data.description} (€${
-						item.data.price_cents / 100
-					}, colors: ${item.data.colors.join(", ")}, category: ${
-						item.data.category
-					}, stock: ${item.data.stock})`,
+					`- ${item.title}: ${item.description} (€${
+						item.priceCents / 100
+					}, colors: ${item.colors.join(", ")}, category: ${
+						item.category
+					}, stock: ${item.stock})`,
 			)
 			.join("\n"); // Create a mapping of product titles to slugs directly from data
-		const productMap = availableProducts.reduce((acc, item) => {
-			acc[item.data.title.toLowerCase()] = item.data.slug;
+		const productMap = items.reduce((acc, item) => {
+			acc[item.title.toLowerCase()] = item.slug;
 			return acc;
 		}, {} as Record<string, string>);
 
 		// Get unique categories from available products
 		const availableCategories = [
-			...new Set(availableProducts.map((item) => item.data.category)),
+			...new Set(items.map((item) => item.category)),
 		];
 		const systemMessage = `You are a helpful personal shopping assistant for a clothing store.
 
