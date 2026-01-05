@@ -7,7 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint",
-		"postinstall": "prisma generate"
+		"postinstall": "prisma generate",
+		"generate-embeddings": "tsx scripts/generate-embeddings.ts"
 	},
 	"dependencies": {
 		"@prisma/adapter-pg": "^7.0.1",
@@ -24,9 +25,11 @@
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
+		"dotenv": "^17.2.3",
 		"eslint": "^9",
 		"eslint-config-next": "16.0.10",
 		"prisma": "^7.0.1",
+		"tsx": "^4.21.0",
 		"typescript": "^5"
 	}
 }
