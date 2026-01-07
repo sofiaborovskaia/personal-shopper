@@ -49,9 +49,13 @@ Colors: ${item.colors.join(", ")}
 
 			// Update the item with the embedding
 			// We use raw SQL because Prisma doesn't fully support vector types yet
+			// Convert the array to a properly formatted vector string for pgvector
+			const vectorString = `[${embedding.join(",")}]`;
+
+			// Use executeRaw with Prisma.sql for safe parameter binding
 			await prisma.$executeRaw`
 				UPDATE "Item" 
-				SET embedding = ${embedding}::vector 
+				SET embedding = ${vectorString}::vector 
 				WHERE id = ${item.id}
 			`;
 
