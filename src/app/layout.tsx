@@ -78,7 +78,7 @@ export default function RootLayout({
 				<main className={styles.main}>{children}</main>
 				<FloatingChatWidget />
 				<footer className={styles.footer}>
-					<Image src="/frog-logo.png" alt="Frog logo" width={60} height={60} />
+					<Image src="/frog-logo.png" alt="Frog logo" width={47} height={30} />
 					<span>© 2026 frog. All rights reserved.</span>
 				</footer>
 			</body>
