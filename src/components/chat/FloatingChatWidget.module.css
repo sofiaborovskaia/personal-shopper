@@ -260,7 +260,6 @@
 .input {
 	flex: 1;
 	padding: 10px 14px;
-	color: var(--white);
 	background: var(--text-light);
 	border: 1px solid white;
 	border-radius: 20px;
@@ -292,9 +291,7 @@
 
 .sendButton:disabled {
 	cursor: not-allowed;
-	color: var(--text-light);
-	border: 1px solid var(--text-light);
-	opacity: 0.6;
+	opacity: 0.3;
 }
 
 /* Responsive */
