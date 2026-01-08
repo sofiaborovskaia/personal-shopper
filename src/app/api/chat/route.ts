@@ -29,20 +29,19 @@ export async function POST(request: Request) {
 						onlyInStock: false, // This time include out-of-stock items
 						minQualityThreshold: 0.7, // Slightly more permissive for fallback
 				  });
+
 		const productSummary =
 			items.length > 0
 				? items
 						.map(
 							(item) =>
-								`- ${item.title}: ${item.description} (€${
-									item.priceCents / 100
-								}, colors: ${item.colors.join(
-									", ",
-								)}, materials: ${item.materials.join(", ")}, category: ${
-									item.category
-								}, stock: ${
-									item.stock > 0 ? item.stock : "out of stock"
-								}) - URL: /items/${item.slug}`,
+								`- ${item.title}: ${item.description} 
+							(€${item.priceCents / 100}, 
+							colors: ${item.colors.join(", ")}, 
+							materials: ${item.materials.join(", ")},
+							category: ${item.category}, 
+							stock: ${item.stock > 0 ? item.stock : "out of stock"}) 
+								- URL: /items/${item.slug}`,
 						)
 						.join("\n")
 				: "No products currently match this request.";

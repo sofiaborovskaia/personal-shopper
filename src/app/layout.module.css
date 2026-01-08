@@ -1,0 +1,13 @@
+.main {
+	padding: 2rem;
+}
+
+.footer {
+	margin: 2rem;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+
+	font-size: 0.75rem;
+	color: var(--white);
+}

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Image from "next/image";
 import "./globals.css";
+import styles from "./layout.module.css";
 import FloatingChatWidget from "@/components/chat/FloatingChatWidget";
 
 const bentonSans = localFont({
@@ -28,7 +30,7 @@ const bentonSans = localFont({
 		{
 			path: "../../public/fonts/BentonSansF-Bold.woff2",
 			weight: "700",
-			style: "normal",
+			style: "bold",
 		},
 		{
 			path: "../../public/fonts/BentonSansF-BoldItalic.woff2",
@@ -73,8 +75,12 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${bentonSans.variable} ${frogSerif.variable}`}>
-				<main style={{ padding: "30px" }}>{children}</main>
+				<main className={styles.main}>{children}</main>
 				<FloatingChatWidget />
+				<footer className={styles.footer}>
+					<Image src="/frog-logo.png" alt="Frog logo" width={60} height={60} />
+					<span>© 2026 frog. All rights reserved.</span>
+				</footer>
 			</body>
 		</html>
 	);

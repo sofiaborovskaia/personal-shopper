@@ -42,7 +42,7 @@
 
 .subtitle {
 	font-size: 0.8rem;
-	margin: 0;
+	margin-top: 0.5rem;
 }
 
 .price {
@@ -67,22 +67,11 @@
 	padding: 0.25rem 0.5rem;
 	border-radius: 4px;
 	line-height: 1.1;
-	border: none;
-	background: var(--grey-1);
-	color: var(--text-light);
+	background: var(--text-light);
+	color: var(--grey-1);
+	border: 1px solid var(--grey-1);
 	cursor: pointer;
-}
-
-.buyButton {
-	font-size: 1rem;
-	font-weight: 600;
-	color: var(--white);
-	padding: 0.5rem 1rem;
-	background-color: var(--magenta-2);
-	cursor: pointer;
-	border: none;
-	max-width: fit-content;
-	border-radius: 4px;
+	font-size: 0.75rem;
 }
 
 .backButton {

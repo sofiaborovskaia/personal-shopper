@@ -99,3 +99,25 @@ h3 {
 	box-shadow: 0 8px 12px var(--magenta-2);
 	transform: translateY(2px);
 }
+
+/* Solid Button */
+.solidButton {
+	max-width: fit-content;
+	padding: 0.75rem 2rem;
+	background-color: var(--magenta-2);
+	box-shadow: 0 8px 20px var(--magenta-2);
+	border-radius: 100px;
+	border: none;
+
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--white);
+
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.solidButton:hover {
+	box-shadow: 0 8px 10px var(--magenta-2);
+	transform: translateY(2px);
+}

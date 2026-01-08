@@ -80,7 +80,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
 						</div>
 					</div>
 
-					<button className={styles.buyButton}>Buy Now</button>
+					<button className="solidButton">Add to Cart</button>
 
 					{item.description && (
 						<div className={styles.description}>
