@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import styles from "./FloatingChatWidget.module.css";
 
 type Message = {
@@ -9,72 +11,48 @@ type Message = {
 	role: "user" | "assistant";
 	content: string;
 	timestamp: Date;
-	productMap?: Record<string, string>;
 };
 
-// Function to convert product names to links
-function convertProductNamesToLinks(
-	text: string,
-	productMap?: Record<string, string>,
-): React.ReactNode {
-	if (!productMap) return text;
-
-	const parts: React.ReactNode[] = [];
-	let lastIndex = 0;
-
-	// Sort product names by length (longest first) to match longer names before shorter ones
-	const sortedProducts = Object.keys(productMap).sort(
-		(a, b) => b.length - a.length,
+// Function to render markdown
+function renderMarkdown(text: string): React.ReactNode {
+	return (
+		<ReactMarkdown
+			remarkPlugins={[remarkGfm]}
+			components={{
+				a: ({ href, children }) => {
+					if (href?.startsWith("/")) {
+						return (
+							<Link
+								href={href}
+								style={{
+									color: "var(--magenta-2)",
+									textDecoration: "underline",
+									fontWeight: "500",
+								}}
+							>
+								{children}
+							</Link>
+						);
+					}
+					return (
+						<a href={href} target="_blank" rel="noopener noreferrer">
+							{children}
+						</a>
+					);
+				},
+				// Style other markdown elements
+				ul: ({ children }) => (
+					<ul style={{ marginLeft: "1.5rem" }}>{children}</ul>
+				),
+				ol: ({ children }) => (
+					<ol style={{ marginLeft: "1.5rem" }}>{children}</ol>
+				),
+				p: ({ children }) => <p style={{ margin: 0 }}>{children}</p>,
+			}}
+		>
+			{text}
+		</ReactMarkdown>
 	);
-
-	// Create a regex pattern that matches any product name (case-insensitive)
-	const pattern = new RegExp(
-		`(${sortedProducts
-			.map((name) => name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-			.join("|")})`,
-		"gi",
-	);
-
-	const matches = Array.from(text.matchAll(pattern));
-
-	matches.forEach((match, index) => {
-		const matchedText = match[0];
-		const matchIndex = match.index!;
-
-		// Add text before the match
-		if (matchIndex > lastIndex) {
-			parts.push(text.substring(lastIndex, matchIndex));
-		}
-
-		// Add the link
-		const slug = productMap[matchedText.toLowerCase()];
-		if (slug) {
-			parts.push(
-				<Link
-					key={`link-${index}`}
-					href={`/items/${slug}`}
-					style={{
-						color: "var(--magenta-2)",
-						textDecoration: "underline",
-						fontWeight: "500",
-					}}
-				>
-					{matchedText}
-				</Link>,
-			);
-		} else {
-			parts.push(matchedText);
-		}
-
-		lastIndex = matchIndex + matchedText.length;
-	});
-
-	// Add remaining text
-	if (lastIndex < text.length) {
-		parts.push(text.substring(lastIndex));
-	}
-
-	return parts.length > 0 ? parts : text;
 }
 
 export default function FloatingChatWidget() {
@@ -130,7 +108,6 @@ export default function FloatingChatWidget() {
 					role: "assistant",
 					content: data.message,
 					timestamp: new Date(),
-					productMap: data.productMap,
 				};
 				setMessages((prev) => [...prev, assistantMessage]);
 			} else {
@@ -203,10 +180,7 @@ export default function FloatingChatWidget() {
 							<div className={styles.messageContent}>
 								<div className={styles.messageText}>
 									{message.role === "assistant"
-										? convertProductNamesToLinks(
-												message.content,
-												message.productMap,
-										  )
+										? renderMarkdown(message.content)
 										: message.content}
 								</div>
 							</div>

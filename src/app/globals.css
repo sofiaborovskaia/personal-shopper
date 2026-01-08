@@ -91,7 +91,7 @@ h3 {
 	font-weight: 500;
 
 	transform: translateY(0px);
-	transition: all 0.3s ease;
+	transition: all 0.3s ease-in-out;
 	cursor: pointer;
 }
 

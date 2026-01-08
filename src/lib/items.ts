@@ -2,6 +2,9 @@ import prisma from "@/lib/prisma";
 import type { Item } from "@prisma/client";
 import OpenAI from "openai";
 
+// Item with distance field added by semantic search
+export type ItemWithDistance = Item & { distance: number };
+
 export async function getItems(): Promise<Item[]> {
 	const items = await prisma.item.findMany();
 	return items;
@@ -25,12 +28,18 @@ export interface SemanticSearchOptions {
 	query: string;
 	limit?: number;
 	onlyInStock?: boolean;
+	minQualityThreshold?: number; // Optional: reject results above this distance
 }
 
 export async function searchItemsBySemantic(
 	options: SemanticSearchOptions,
-): Promise<Item[]> {
-	const { query, limit = 5, onlyInStock = false } = options;
+): Promise<ItemWithDistance[]> {
+	const {
+		query,
+		limit = 5,
+		onlyInStock = false,
+		minQualityThreshold,
+	} = options;
 
 	// Initialize OpenAI client
 	const openai = new OpenAI({
@@ -50,23 +59,28 @@ export async function searchItemsBySemantic(
 	// OpenAI embeddings are normalized, so cosine distance is most appropriate
 	// Lower distance = more similar (0 = identical, 2 = opposite)
 	// Return top-K most similar items regardless of absolute distance
-	let items: Item[];
+	let items: ItemWithDistance[];
 
 	if (onlyInStock) {
-		items = await prisma.$queryRaw<Item[]>`
+		items = await prisma.$queryRaw<ItemWithDistance[]>`
 			SELECT *, (embedding <=> ${vectorString}::vector) as distance
 			FROM "Item"
-			WHERE "inStock" = true
+			WHERE "available" = true
 			ORDER BY embedding <=> ${vectorString}::vector
 			LIMIT ${limit}
 		`;
 	} else {
-		items = await prisma.$queryRaw<Item[]>`
+		items = await prisma.$queryRaw<ItemWithDistance[]>`
 			SELECT *, (embedding <=> ${vectorString}::vector) as distance
 			FROM "Item"
 			ORDER BY embedding <=> ${vectorString}::vector
 			LIMIT ${limit}
 		`;
+	}
+
+	// Optional quality filtering: reject results that are too dissimilar
+	if (minQualityThreshold !== undefined) {
+		items = items.filter((item) => item.distance < minQualityThreshold);
 	}
 
 	return items;
