@@ -1,9 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import { renderMarkdown } from "./FloatingChatWidget.utils";
 import styles from "./FloatingChatWidget.module.css";
 
 type Message = {
@@ -12,48 +10,6 @@ type Message = {
 	content: string;
 	timestamp: Date;
 };
-
-// Function to render markdown
-function renderMarkdown(text: string): React.ReactNode {
-	return (
-		<ReactMarkdown
-			remarkPlugins={[remarkGfm]}
-			components={{
-				a: ({ href, children }) => {
-					if (href?.startsWith("/")) {
-						return (
-							<Link
-								href={href}
-								style={{
-									color: "var(--magenta-2)",
-									textDecoration: "underline",
-									fontWeight: "500",
-								}}
-							>
-								{children}
-							</Link>
-						);
-					}
-					return (
-						<a href={href} target="_blank" rel="noopener noreferrer">
-							{children}
-						</a>
-					);
-				},
-				// Style other markdown elements
-				ul: ({ children }) => (
-					<ul style={{ marginLeft: "1.5rem" }}>{children}</ul>
-				),
-				ol: ({ children }) => (
-					<ol style={{ marginLeft: "1.5rem" }}>{children}</ol>
-				),
-				p: ({ children }) => <p style={{ margin: 0 }}>{children}</p>,
-			}}
-		>
-			{text}
-		</ReactMarkdown>
-	);
-}
 
 export default function FloatingChatWidget() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -253,7 +209,7 @@ export default function FloatingChatWidget() {
 				>
 					<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
 				</svg>
-				<span className={styles.buttonText}>Ask AI</span>
+				<span className={styles.buttonText}>Ask me!</span>
 			</button>
 		</>
 	);
