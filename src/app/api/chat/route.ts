@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { searchItemsBySemantic } from "@/lib/items";
+import { getShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant";
 
 export async function POST(request: Request) {
 	try {
@@ -45,21 +46,7 @@ export async function POST(request: Request) {
 						)
 						.join("\n")
 				: "No products currently match this request.";
-		const systemMessage = `You are a helpful personal shopping assistant for a clothing store.
-
-Your role:
-1. I've already found the most relevant products for the customer's request using semantic search
-2. Your job is to explain WHY these specific products are a good fit
-3. Recommend 2-3 items from the list below that best match their needs
-4. Be specific about features that address their request (e.g., "waterproof for hiking", "warm for winter", "professional for work")
-5. Mention price, colors, and materials when relevant
-6. If stock is low (under 20), mention "limited availability". If stock is over 20, don't mention stock at all.
-7. **IMPORTANT**: When mentioning a product, create a Markdown link using the EXACT product title and the URL provided.
-   Example: "I recommend the [All-Weather Field Jacket](/items/all-weather-field-jacket) because..."
-
-${`Here are the most relevant products for this customer:\n${productSummary}`}
-
-Be conversational, helpful, and explain the connection between what they asked for and why you're recommending these specific items.`;
+		const systemMessage = getShoppingAssistantPrompt(productSummary);
 
 		const completion = await openai.chat.completions.create({
 			model: "gpt-4o-mini",
