@@ -12,7 +12,7 @@ export default function Home() {
 						collections, transforming browsing into discovery.
 					</p>
 					<p className={styles.subtitle}>
-						Whether you're seeking the perfect product or need tailored
+						Whether you&rsquo;re seeking the perfect product or need tailored
 						recommendations, our AI assistant is here to make your experience
 						seamless and enjoyable.
 					</p>
