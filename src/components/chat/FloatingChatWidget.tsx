@@ -10,7 +10,9 @@ export default function FloatingChatWidget() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [showSlowMessage, setShowSlowMessage] = useState(false);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -19,6 +21,25 @@ export default function FloatingChatWidget() {
 	useEffect(() => {
 		scrollToBottom();
 	}, [messages]);
+
+	useEffect(() => {
+		if (loading) {
+			timeoutRef.current = setTimeout(() => {
+				setShowSlowMessage(true);
+			}, 3000);
+		} else {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+			setShowSlowMessage(false);
+		}
+
+		return () => {
+			if (timeoutRef.current) {
+				clearTimeout(timeoutRef.current);
+			}
+		};
+	}, [loading]);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -141,11 +162,20 @@ export default function FloatingChatWidget() {
 						<div className={`${styles.message} ${styles.assistantMessage}`}>
 							<div className={styles.avatar}>🤖</div>
 							<div className={styles.messageContent}>
-								<div className={styles.loadingDots}>
-									<span></span>
-									<span></span>
-									<span></span>
+								<div style={{ display: "inline-block" }}>
+									<div className={styles.loadingDots}>
+										<span></span>
+										<span></span>
+										<span></span>
+									</div>
 								</div>
+								{showSlowMessage && (
+									<span
+										className={`${styles.messageText} ${styles.slowMessage}`}
+									>
+										Hold on, the answer is nearly there...
+									</span>
+								)}
 							</div>
 						</div>
 					)}

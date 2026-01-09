@@ -291,6 +291,23 @@
 	opacity: 0.3;
 }
 
+/* Slow message fade in */
+.slowMessage {
+	margin-left: 10px;
+	font-size: 0.9em;
+	animation: fadeIn 0.3s ease-in forwards;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 0.8;
+	}
+}
+
 /* Responsive */
 @media (max-width: 480px) {
 	.chatWindow {
