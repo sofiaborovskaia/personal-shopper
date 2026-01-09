@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { renderMarkdown } from "./FloatingChatWidget.utils";
 import styles from "./FloatingChatWidget.module.css";
 import type { Message } from "./FloatingChatWidget.types";
+import { sendChatMessage } from "@/app/actions/chat";
 
 export default function FloatingChatWidget() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -57,27 +58,19 @@ export default function FloatingChatWidget() {
 		setLoading(true);
 
 		try {
-			const res = await fetch("/api/chat", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					message: userMessage.content,
-					history: messages.map((msg) => ({
-						role: msg.role,
-						content: msg.content,
-					})),
-				}),
-			});
-
-			const data = await res.json();
+			const data = await sendChatMessage(
+				userMessage.content,
+				messages.map((msg) => ({
+					role: msg.role,
+					content: msg.content,
+				})),
+			);
 
 			if (data.success) {
 				const assistantMessage: Message = {
 					id: (Date.now() + 1).toString(),
 					role: "assistant",
-					content: data.message,
+					content: data.message || "Sorry, I couldn't generate a response.",
 					timestamp: new Date(),
 				};
 				setMessages((prev) => [...prev, assistantMessage]);
