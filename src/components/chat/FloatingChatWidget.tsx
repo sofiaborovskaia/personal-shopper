@@ -3,13 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { renderMarkdown } from "./FloatingChatWidget.utils";
 import styles from "./FloatingChatWidget.module.css";
-
-type Message = {
-	id: string;
-	role: "user" | "assistant";
-	content: string;
-	timestamp: Date;
-};
+import type { Message } from "./FloatingChatWidget.types";
 
 export default function FloatingChatWidget() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -159,6 +153,7 @@ export default function FloatingChatWidget() {
 					<div ref={messagesEndRef} />
 				</div>
 
+				{/* User input */}
 				<form onSubmit={handleSubmit} className={styles.inputForm}>
 					<input
 						type="text"
@@ -168,6 +163,7 @@ export default function FloatingChatWidget() {
 						className={styles.input}
 						disabled={loading}
 					/>
+					{/* Submit button */}
 					<button
 						type="submit"
 						disabled={loading || !input.trim()}
