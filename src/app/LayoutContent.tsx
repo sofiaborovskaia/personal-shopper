@@ -11,7 +11,7 @@ export default function LayoutContent({
 	children: React.ReactNode;
 }) {
 	const pathname = usePathname();
-	const isHomePage = pathname === "/";
+	const isHomePage = pathname === "/"; // Hide footer and AI chat on home page
 
 	return (
 		<>
