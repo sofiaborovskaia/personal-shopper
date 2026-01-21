@@ -2,13 +2,27 @@ import prisma from "@/lib/prisma";
 import type { Item } from "@prisma/client";
 import OpenAI from "openai";
 
-// Item with distance field added by semantic search
+// ============================================================================
+// Types & Interfaces
+// ============================================================================
+
 export type ItemWithDistance = Item & { distance: number };
 
 export interface GetItemsOptions {
 	limit?: number;
 	onlyInStock?: boolean;
 }
+
+export interface SemanticSearchOptions {
+	query: string;
+	limit?: number;
+	onlyInStock?: boolean;
+	minQualityThreshold?: number; // Reject results above this distance
+}
+
+// ============================================================================
+// Get Items
+// ============================================================================
 
 export async function getItems(options?: GetItemsOptions): Promise<Item[]> {
 	const { limit, onlyInStock } = options || {};
@@ -21,12 +35,20 @@ export async function getItems(options?: GetItemsOptions): Promise<Item[]> {
 	return items;
 }
 
+// ============================================================================
+// Get Item by ID
+// ============================================================================
+
 export async function getItemById(id: string): Promise<Item | null> {
 	const item = await prisma.item.findUnique({
 		where: { id },
 	});
 	return item;
 }
+
+// ============================================================================
+// Get Item by Slug
+// ============================================================================
 
 export async function getItemBySlug(slug: string): Promise<Item | null> {
 	const item = await prisma.item.findUnique({
@@ -35,12 +57,9 @@ export async function getItemBySlug(slug: string): Promise<Item | null> {
 	return item;
 }
 
-export interface SemanticSearchOptions {
-	query: string;
-	limit?: number;
-	onlyInStock?: boolean;
-	minQualityThreshold?: number; // Optional: reject results above this distance
-}
+// ============================================================================
+// Semantic Search
+// ============================================================================
 
 export async function searchItemsBySemantic(
 	options: SemanticSearchOptions,
@@ -52,7 +71,6 @@ export async function searchItemsBySemantic(
 		minQualityThreshold,
 	} = options;
 
-	// Initialize OpenAI client
 	const openai = new OpenAI({
 		apiKey: process.env.OPENAI_API_KEY,
 	});
@@ -67,7 +85,6 @@ export async function searchItemsBySemantic(
 	const vectorString = `[${queryEmbedding.join(",")}]`;
 
 	// Perform vector similarity search using cosine distance operator (<=>)
-	// OpenAI embeddings are normalized, so cosine distance is most appropriate
 	// Lower distance = more similar (0 = identical, 2 = opposite)
 	// Return top-K most similar items regardless of absolute distance
 	let items: ItemWithDistance[];
