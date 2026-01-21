@@ -5,8 +5,19 @@ import OpenAI from "openai";
 // Item with distance field added by semantic search
 export type ItemWithDistance = Item & { distance: number };
 
-export async function getItems(): Promise<Item[]> {
-	const items = await prisma.item.findMany();
+export interface GetItemsOptions {
+	limit?: number;
+	onlyInStock?: boolean;
+}
+
+export async function getItems(options?: GetItemsOptions): Promise<Item[]> {
+	const { limit, onlyInStock } = options || {};
+
+	const items = await prisma.item.findMany({
+		where: onlyInStock ? { available: true } : undefined,
+		take: limit,
+		orderBy: { category: "asc" },
+	});
 	return items;
 }
 

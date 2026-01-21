@@ -1,7 +1,7 @@
 "use server";
 
 import OpenAI from "openai";
-import { searchItemsBySemantic } from "@/lib/items";
+import { searchItemsBySemantic, getItems } from "@/lib/items";
 import { getShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant";
 
 type ChatMessage = {
@@ -32,9 +32,16 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 						minQualityThreshold: 0.7,
 				  });
 
-		const productSummary =
+		// If still no results, user might be asking a general question
+		// Provide a sample of products for them to browse
+		const finalItems =
 			items.length > 0
 				? items
+				: await getItems({ limit: 10, onlyInStock: true });
+
+		const productSummary =
+			finalItems.length > 0
+				? finalItems
 						.map(
 							(item) =>
 								`- ${item.title}: ${item.description} 
@@ -46,7 +53,7 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 								- URL: /items/${item.slug}`,
 						)
 						.join("\n")
-				: "No products currently match this request.";
+				: "No products available or match this request.";
 
 		const systemMessage = getShoppingAssistantPrompt(productSummary);
 
