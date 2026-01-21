@@ -33,6 +33,10 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
+input {
+	font-family: var(--font-benton-sans), Arial, sans-serif;
+}
+
 * {
 	box-sizing: border-box;
 	padding: 0;
