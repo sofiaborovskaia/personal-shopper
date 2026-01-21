@@ -10,6 +10,7 @@ export type ItemWithDistance = Item & { distance: number };
 
 export interface GetItemsOptions {
 	limit?: number;
+	skip?: number;
 	onlyInStock?: boolean;
 }
 
@@ -25,17 +26,35 @@ export interface SemanticSearchOptions {
 // ============================================================================
 
 export async function getItems(options?: GetItemsOptions): Promise<Item[]> {
-	const { limit, onlyInStock } = options || {};
+	const { limit, skip, onlyInStock } = options || {};
 
 	const items = await prisma.item.findMany({
 		where: onlyInStock ? { available: true } : undefined,
 		take: limit,
+		skip: skip,
 		orderBy: { category: "asc" },
 	});
 	return items;
 }
 
 // ============================================================================
+// Get Items Count
+// ============================================================================
+// ============================================================================
+
+export async function getItemsCount(
+	options?: Pick<GetItemsOptions, "onlyInStock">,
+): Promise<number> {
+	const { onlyInStock } = options || {};
+
+	const count = await prisma.item.count({
+		where: onlyInStock ? { available: true } : undefined,
+	});
+	return count;
+}
+
+// ============================================================================
+// Get Item====================================================================
 // Get Item by ID
 // ============================================================================
 
