@@ -12,6 +12,7 @@ export interface GetItemsOptions {
 	limit?: number;
 	skip?: number;
 	onlyInStock?: boolean;
+	category?: string;
 }
 
 export interface SemanticSearchOptions {
@@ -26,10 +27,15 @@ export interface SemanticSearchOptions {
 // ============================================================================
 
 export async function getItems(options?: GetItemsOptions): Promise<Item[]> {
-	const { limit, skip, onlyInStock } = options || {};
+	const { limit, skip, onlyInStock, category } = options || {};
 
 	const items = await prisma.item.findMany({
-		where: onlyInStock ? { available: true } : undefined,
+		where: {
+			...(onlyInStock ? { available: true } : {}),
+			...(category
+				? { category: { equals: category, mode: "insensitive" } }
+				: {}),
+		},
 		take: limit,
 		skip: skip,
 		orderBy: { category: "asc" },
@@ -40,21 +46,24 @@ export async function getItems(options?: GetItemsOptions): Promise<Item[]> {
 // ============================================================================
 // Get Items Count
 // ============================================================================
-// ============================================================================
 
 export async function getItemsCount(
-	options?: Pick<GetItemsOptions, "onlyInStock">,
+	options?: Pick<GetItemsOptions, "onlyInStock" | "category">,
 ): Promise<number> {
-	const { onlyInStock } = options || {};
+	const { onlyInStock, category } = options || {};
 
 	const count = await prisma.item.count({
-		where: onlyInStock ? { available: true } : undefined,
+		where: {
+			...(onlyInStock ? { available: true } : {}),
+			...(category
+				? { category: { equals: category, mode: "insensitive" } }
+				: {}),
+		},
 	});
 	return count;
 }
 
 // ============================================================================
-// Get Item====================================================================
 // Get Item by ID
 // ============================================================================
 

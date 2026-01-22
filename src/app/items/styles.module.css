@@ -77,3 +77,18 @@
 	font-size: 0.9rem;
 	margin: 0;
 }
+
+.categoryFilter {
+	display: flex;
+	gap: 40px;
+	margin-bottom: 2rem;
+}
+
+.categoryTab {
+	color: var(--white);
+	font-size: 1.2rem;
+}
+
+.categoryTabActive {
+	font-weight: 600;
+}

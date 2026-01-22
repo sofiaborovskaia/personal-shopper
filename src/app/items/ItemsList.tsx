@@ -11,12 +11,14 @@ interface ItemsListProps {
 	initialItems: Item[];
 	hasMore: boolean;
 	totalCount: number;
+	category?: string;
 }
 
 export default function ItemsList({
 	initialItems,
 	hasMore: initialHasMore,
 	totalCount,
+	category,
 }: ItemsListProps) {
 	const [items, setItems] = useState<Item[]>(initialItems);
 	const [page, setPage] = useState(1);
@@ -27,7 +29,7 @@ export default function ItemsList({
 		setLoading(true);
 		const nextPage = page + 1;
 
-		const result = await getItemsPaginated(nextPage);
+		const result = await getItemsPaginated(nextPage, 12, category);
 
 		setItems([...items, ...result.items]);
 		setPage(nextPage);
