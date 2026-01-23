@@ -31,7 +31,7 @@ This project is a work in progress, but it has been deployed and can be tested [
 
 ## ...or run locally
 
-Run the development server:
+Install dependencies and run the development server:
 
 ```bash
 npm run dev
