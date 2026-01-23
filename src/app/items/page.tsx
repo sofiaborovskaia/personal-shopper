@@ -21,6 +21,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
 		<div className={styles.container}>
 			<CategoryFilter categories={categories} />
 			<ItemsList
+				key={category || "all"}
 				initialItems={initialData.items}
 				hasMore={initialData.hasMore}
 				totalCount={initialData.totalCount}
