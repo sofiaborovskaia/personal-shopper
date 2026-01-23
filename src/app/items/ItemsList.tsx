@@ -29,7 +29,7 @@ export default function ItemsList({
 		setLoading(true);
 		const nextPage = page + 1;
 
-		const result = await getItemsPaginated(nextPage, 12, category);
+		const result = await getItemsPaginated(nextPage, undefined, category);
 
 		setItems([...items, ...result.items]);
 		setPage(nextPage);

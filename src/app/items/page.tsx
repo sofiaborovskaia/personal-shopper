@@ -13,7 +13,7 @@ export default async function ItemsPage({ searchParams }: ItemsPageProps) {
 	const category = params.category;
 
 	const [initialData, categories] = await Promise.all([
-		getItemsPaginated(1, 12, category),
+		getItemsPaginated(1, undefined, category),
 		getCategories(),
 	]);
 
