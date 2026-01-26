@@ -21,10 +21,14 @@ export default async function ProductDetailPage({ params }: PageProps) {
 	const imageNumber = Math.floor(Math.random() * 3) + 1;
 	const imageSrc = `/productPictures/${imageNumber}.jpg`;
 
+	const categorySlug = item.category.toLowerCase();
+	const backHref = `/items?category=${categorySlug}`;
+	const backText = `← Back to ${item.category}`;
+
 	return (
 		<div className={styles.container}>
-			<Link href="/items" className={styles.backButton}>
-				← Back to products
+			<Link href={backHref} className={styles.backButton}>
+				{backText}
 			</Link>
 
 			<div className={styles.productWrapper}>
