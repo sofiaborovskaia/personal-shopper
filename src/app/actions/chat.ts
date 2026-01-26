@@ -22,31 +22,6 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 
 		const result = moderation.results[0];
 
-		console.log("🛡️ Moderation Check:");
-		console.log(`  Flagged: ${result.flagged}`);
-		console.log("  Categories:");
-		console.log(`    Hate: ${result.categories.hate}`);
-		console.log(
-			`    Hate/Threatening: ${result.categories["hate/threatening"]}`,
-		);
-		console.log(`    Harassment: ${result.categories.harassment}`);
-		console.log(
-			`    Harassment/Threatening: ${result.categories["harassment/threatening"]}`,
-		);
-		console.log(`    Self-harm: ${result.categories["self-harm"]}`);
-		console.log(
-			`    Self-harm/Intent: ${result.categories["self-harm/intent"]}`,
-		);
-		console.log(
-			`    Self-harm/Instructions: ${result.categories["self-harm/instructions"]}`,
-		);
-		console.log(`    Sexual: ${result.categories.sexual}`);
-		console.log(`    Sexual/Minors: ${result.categories["sexual/minors"]}`);
-		console.log(`    Violence: ${result.categories.violence}`);
-		console.log(
-			`    Violence/Graphic: ${result.categories["violence/graphic"]}`,
-		);
-
 		// Optionally block flagged content
 		if (result.flagged) {
 			return {
@@ -115,15 +90,6 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 		});
 
 		const aiResponse = completion.choices[0].message.content;
-
-		// Log token usage
-		const usage = completion.usage;
-		if (usage) {
-			console.log("🤖 Token Usage:");
-			console.log(`  Prompt tokens: ${usage.prompt_tokens}`);
-			console.log(`  Completion tokens: ${usage.completion_tokens}`);
-			console.log(`  Total tokens: ${usage.total_tokens}`);
-		}
 
 		return {
 			success: true,
