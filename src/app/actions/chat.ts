@@ -30,7 +30,7 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 						query: message,
 						onlyInStock: false,
 						minQualityThreshold: 0.7,
-				  });
+					});
 
 		// If still no results, user might be asking a general question
 		// Provide a sample of products for them to browse
@@ -74,6 +74,15 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 		});
 
 		const aiResponse = completion.choices[0].message.content;
+
+		// Log token usage
+		const usage = completion.usage;
+		if (usage) {
+			console.log("🤖 Token Usage:");
+			console.log(`  Prompt tokens: ${usage.prompt_tokens}`);
+			console.log(`  Completion tokens: ${usage.completion_tokens}`);
+			console.log(`  Total tokens: ${usage.total_tokens}`);
+		}
 
 		return {
 			success: true,
