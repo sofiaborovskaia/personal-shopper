@@ -1,7 +1,9 @@
 "use server";
 
 import OpenAI from "openai";
-import { searchItemsBySemantic, getItems } from "@/lib/items";
+import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
+import checkMessageModeration from "@/lib/ai/checkMessageModeration";
+
 import { getShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant";
 
 type ChatMessage = {
@@ -16,61 +18,17 @@ export async function sendChatMessage(message: string, history: ChatMessage[]) {
 		});
 
 		// Check moderation
-		const moderation = await openai.moderations.create({
-			input: message,
-		});
+		const moderation = await checkMessageModeration(message);
 
-		const result = moderation.results[0];
-
-		// Optionally block flagged content
-		if (result.flagged) {
+		if (!moderation.success) {
+			// If moderation fails, return the moderation message and abort the chat response
 			return {
 				success: false,
-				message:
-					"Your message was flagged by our content moderation system. Please rephrase your question.",
+				message: moderation.message,
 			};
 		}
 
-		// Use semantic search to find relevant products based on the user's message
-		const relevantItems = await searchItemsBySemantic({
-			query: message,
-			onlyInStock: true,
-			minQualityThreshold: 0.65,
-		});
-
-		// If no relevant items found, use a broader search
-		const items =
-			relevantItems.length > 0
-				? relevantItems
-				: await searchItemsBySemantic({
-						query: message,
-						onlyInStock: false,
-						minQualityThreshold: 0.7,
-					});
-
-		// If still no results, user might be asking a general question
-		// Provide a sample of products for them to browse
-		const finalItems =
-			items.length > 0
-				? items
-				: await getItems({ limit: 10, onlyInStock: true });
-
-		const productSummary =
-			finalItems.length > 0
-				? finalItems
-						.map(
-							(item) =>
-								`- ${item.title}: ${item.description} 
-							(€${item.priceCents / 100}, 
-							colors: ${item.colors.join(", ")}, 
-							materials: ${item.materials.join(", ")},
-							category: ${item.category}, 
-							stock: ${item.stock > 0 ? item.stock : "out of stock"}) 
-								- URL: /items/${item.slug}`,
-						)
-						.join("\n")
-				: "No products available or match this request.";
-
+		const productSummary = await getRelevantProductsForMessage(message);
 		const systemMessage = getShoppingAssistantPrompt(productSummary);
 
 		const completion = await openai.chat.completions.create({
