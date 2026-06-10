@@ -1,6 +1,6 @@
 import prisma from "@/lib/prisma";
 import type { Item } from "@prisma/client";
-import OpenAI from "openai";
+import openai from "@/lib/ai/openai";
 
 // ============================================================================
 // Types & Interfaces
@@ -98,10 +98,6 @@ export async function searchItemsBySemantic(
 		onlyInStock = false,
 		minQualityThreshold,
 	} = options;
-
-	const openai = new OpenAI({
-		apiKey: process.env.OPENAI_API_KEY,
-	});
 
 	// Generate embedding for the search query
 	const embeddingResponse = await openai.embeddings.create({

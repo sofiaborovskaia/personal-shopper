@@ -1,9 +1,5 @@
-import OpenAI from "openai";
+import openai from "@/lib/ai/openai";
 import type { ChatMessage } from "@/types/chat";
-
-const openai = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY,
-});
 
 const generateShoppingAssistantReply = async (
 	message: string,

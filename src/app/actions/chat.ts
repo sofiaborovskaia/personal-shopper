@@ -1,8 +1,9 @@
 "use server";
 
-import getProductSummaryForMessage from "@/lib/ai/getProductSummaryForMessage";
+import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
 import checkMessageModeration from "@/lib/ai/checkMessageModeration";
 import generateShoppingAssistantReply from "@/lib/ai/generateShoppingAssistantReply";
+import formatProductSummary from "@/lib/ai/formatProductSummary";
 
 import { getShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant";
 import type { ChatMessage } from "@/types/chat";
@@ -21,7 +22,8 @@ export async function sendChatMessage(
 			};
 		}
 
-		const productSummary = await getProductSummaryForMessage(userMessage);
+		const products = await getRelevantProductsForMessage(userMessage);
+		const productSummary = formatProductSummary(products);
 
 		const systemMessage = getShoppingAssistantPrompt(productSummary);
 
