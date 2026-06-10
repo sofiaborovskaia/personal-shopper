@@ -1,6 +1,6 @@
 import { searchItemsBySemantic, getItems } from "@/lib/items";
 
-const getRelevantProductsForMessage = async (message: string) => {
+const getProductSummaryForMessage = async (message: string) => {
 	// Use semantic search to find relevant products based on the user's message
 	const relevantItems = await searchItemsBySemantic({
 		query: message,
@@ -42,4 +42,4 @@ const getRelevantProductsForMessage = async (message: string) => {
 	return productSummary;
 };
 
-export default getRelevantProductsForMessage;
+export default getProductSummaryForMessage;

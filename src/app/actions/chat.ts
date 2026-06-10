@@ -1,57 +1,39 @@
 "use server";
 
-import OpenAI from "openai";
-import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
+import getProductSummaryForMessage from "@/lib/ai/getProductSummaryForMessage";
 import checkMessageModeration from "@/lib/ai/checkMessageModeration";
+import generateShoppingAssistantReply from "@/lib/ai/generateShoppingAssistantReply";
 
 import { getShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant";
+import type { ChatMessage } from "@/types/chat";
 
-type ChatMessage = {
-	role: "user" | "assistant";
-	content: string;
-};
-
-export async function sendChatMessage(message: string, history: ChatMessage[]) {
+export async function sendChatMessage(
+	userMessage: string,
+	history: ChatMessage[],
+) {
 	try {
-		const openai = new OpenAI({
-			apiKey: process.env.OPENAI_API_KEY,
-		});
-
-		// Check moderation
-		const moderation = await checkMessageModeration(message);
-
+		// Moderation: if fails, return the moderation message and abort the chat response
+		const moderation = await checkMessageModeration(userMessage);
 		if (!moderation.success) {
-			// If moderation fails, return the moderation message and abort the chat response
 			return {
 				success: false,
 				message: moderation.message,
 			};
 		}
 
-		const productSummary = await getRelevantProductsForMessage(message);
+		const productSummary = await getProductSummaryForMessage(userMessage);
+
 		const systemMessage = getShoppingAssistantPrompt(productSummary);
 
-		const completion = await openai.chat.completions.create({
-			model: "gpt-4o-mini",
-			messages: [
-				{
-					role: "system",
-					content: systemMessage,
-				},
-				...history,
-				{
-					role: "user",
-					content: message,
-				},
-			],
-			temperature: 0.7,
-		});
-
-		const aiResponse = completion.choices[0].message.content;
+		const reply = await generateShoppingAssistantReply(
+			userMessage,
+			history,
+			systemMessage,
+		);
 
 		return {
 			success: true,
-			message: aiResponse,
+			message: reply,
 		};
 	} catch (error) {
 		console.error("Error calling OpenAI:", error);
