@@ -1,11 +1,6 @@
 "use server";
 
-import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
-import checkMessageModeration from "@/lib/ai/checkMessageModeration";
-import generateShoppingAssistantReply from "@/lib/ai/generateShoppingAssistantReply";
-import formatProductSummary from "@/lib/ai/formatProductSummary";
-
-import { getShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant";
+import handleShoppingAssistantMessage from "@/lib/ai/handleShoppingAssistantMessage";
 import type { ChatMessage } from "@/types/chat";
 
 export async function sendChatMessage(
@@ -13,30 +8,10 @@ export async function sendChatMessage(
 	history: ChatMessage[],
 ) {
 	try {
-		// Moderation: if fails, return the moderation message and abort the chat response
-		const moderation = await checkMessageModeration(userMessage);
-		if (!moderation.success) {
-			return {
-				success: false,
-				message: moderation.message,
-			};
-		}
-
-		const products = await getRelevantProductsForMessage(userMessage);
-		const productSummary = formatProductSummary(products);
-
-		const systemMessage = getShoppingAssistantPrompt(productSummary);
-
-		const reply = await generateShoppingAssistantReply(
-			userMessage,
+		return await handleShoppingAssistantMessage({
+			message: userMessage,
 			history,
-			systemMessage,
-		);
-
-		return {
-			success: true,
-			message: reply,
-		};
+		});
 	} catch (error) {
 		console.error("Error calling OpenAI:", error);
 
