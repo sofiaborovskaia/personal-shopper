@@ -3,17 +3,17 @@ export type ChatMessage = {
 	content: string;
 };
 
-export type ShoppingIntent =
-	| "new_product_search"
-	| "refine_previous_search"
-	| "product_detail_question"
-	| "compare_products"
-	| "policy_question"
+export type ShoppingNeed =
+	| "product_retrieval"
+	| "previous_product_context"
+	| "policy_context"
 	| "store_overview"
-	| "unsupported";
+	| "clarification"
+	| "conversational_style_advice"
+	| "unsupported_redirect";
 
-export type IntentClassification = {
-	intent: ShoppingIntent;
+export type ShoppingNeedClassification = {
+	needs: ShoppingNeed[];
 	confidence: number;
 	rewrittenQuery?: string;
 	referencedProducts?: string[];

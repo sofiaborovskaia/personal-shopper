@@ -1,18 +1,18 @@
 import openai from "@/lib/ai/openai";
 import {
-	getClassifyShoppingIntentPrompt,
-	SHOPPING_INTENTS,
-} from "@/lib/prompts/classify-shopping-intent";
+	getClassifyShoppingNeedPrompt,
+	SHOPPING_NEEDS,
+} from "@/lib/prompts/classify-shopping-need";
 import type {
 	ChatMessage,
-	IntentClassification,
-	ShoppingIntent,
+	ShoppingNeed,
+	ShoppingNeedClassification,
 } from "@/types/chat";
 
-function isShoppingIntent(value: unknown): value is ShoppingIntent {
+function isShoppingNeed(value: unknown): value is ShoppingNeed {
 	return (
 		typeof value === "string" &&
-		SHOPPING_INTENTS.includes(value as ShoppingIntent)
+		SHOPPING_NEEDS.includes(value as ShoppingNeed)
 	);
 }
 
@@ -24,20 +24,21 @@ function toConfidence(value: unknown): number {
 	return Math.max(0, Math.min(1, value));
 }
 
-function normalizeClassification(value: unknown): IntentClassification {
+function normalizeClassification(value: unknown): ShoppingNeedClassification {
 	if (!value || typeof value !== "object") {
 		return {
-			intent: "new_product_search",
+			needs: ["product_retrieval"],
 			confidence: 0.4,
 		};
 	}
 
-	const candidate = value as Partial<IntentClassification>;
+	const candidate = value as Partial<ShoppingNeedClassification>;
+	const needs = Array.isArray(candidate.needs)
+		? candidate.needs.filter(isShoppingNeed)
+		: [];
 
 	return {
-		intent: isShoppingIntent(candidate.intent)
-			? candidate.intent
-			: "new_product_search",
+		needs: needs.length > 0 ? needs : ["product_retrieval"],
 		confidence: toConfidence(candidate.confidence),
 		...(typeof candidate.rewrittenQuery === "string" &&
 		candidate.rewrittenQuery.trim()
@@ -56,13 +57,13 @@ function normalizeClassification(value: unknown): IntentClassification {
 	};
 }
 
-const classifyShoppingIntent = async ({
+const classifyShoppingNeed = async ({
 	message,
 	history,
 }: {
 	message: string;
 	history: ChatMessage[];
-}): Promise<IntentClassification> => {
+}): Promise<ShoppingNeedClassification> => {
 	const recentHistory = history.slice(-6);
 
 	const completion = await openai.chat.completions.create({
@@ -71,7 +72,7 @@ const classifyShoppingIntent = async ({
 		messages: [
 			{
 				role: "system",
-				content: getClassifyShoppingIntentPrompt(),
+				content: getClassifyShoppingNeedPrompt(),
 			},
 			{
 				role: "user",
@@ -85,16 +86,17 @@ const classifyShoppingIntent = async ({
 	});
 
 	const content = completion.choices[0].message.content;
+	console.log("shopping needs", content);
 	if (!content) {
-		return { intent: "new_product_search", confidence: 0.4 };
+		return { needs: ["product_retrieval"], confidence: 0.4 };
 	}
 
 	try {
 		return normalizeClassification(JSON.parse(content));
 	} catch (error) {
-		console.error("Error parsing intent classification:", error);
-		return { intent: "new_product_search", confidence: 0.4 };
+		console.error("Error parsing shopping need classification:", error);
+		return { needs: ["product_retrieval"], confidence: 0.4 };
 	}
 };
 
-export default classifyShoppingIntent;
+export default classifyShoppingNeed;

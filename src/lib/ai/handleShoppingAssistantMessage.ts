@@ -1,9 +1,8 @@
 import checkMessageModeration from "@/lib/ai/checkMessageModeration";
-import classifyShoppingIntent from "@/lib/ai/classifyShoppingIntent";
+import classifyShoppingNeed from "@/lib/ai/classifyShoppingNeed";
 import generatePolicyReply from "@/lib/ai/generatePolicyReply";
 import generateProductReply from "@/lib/ai/generateProductReply";
 import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
-import shouldRetrieveProducts from "@/lib/ai/shouldRetrieveProducts";
 import { getItems } from "@/lib/items";
 import type { ChatMessage } from "@/types/chat";
 
@@ -23,20 +22,20 @@ const handleShoppingAssistantMessage = async ({
 		};
 	}
 
-	// Classify the user's intent
-	const classification = await classifyShoppingIntent({ message, history });
+	// Decide what context/actions the assistant needs before answering.
+	const classification = await classifyShoppingNeed({ message, history });
 
-	if (classification.intent === "policy_question") {
+	if (classification.needs.includes("policy_context")) {
 		const reply = await generatePolicyReply(message, history);
 
 		return {
 			success: true,
 			message: reply,
-			intent: classification.intent,
+			needs: classification.needs,
 		};
 	}
 
-	if (classification.intent === "store_overview") {
+	if (classification.needs.includes("store_overview")) {
 		const products = await getItems({ limit: 5, onlyInStock: true });
 		const reply = await generateProductReply({
 			message,
@@ -47,21 +46,43 @@ const handleShoppingAssistantMessage = async ({
 		return {
 			success: true,
 			message: reply,
-			intent: classification.intent,
+			needs: classification.needs,
 		};
 	}
 
-	if (!shouldRetrieveProducts(classification)) {
+	if (!classification.needs.includes("product_retrieval")) {
+		if (
+			classification.needs.includes("previous_product_context") ||
+			classification.needs.includes("conversational_style_advice") ||
+			classification.needs.includes("clarification")
+		) {
+			const reply = await generateProductReply({
+				message,
+				history,
+				products: [],
+			});
+
+			return {
+				success: true,
+				message: reply,
+				needs: classification.needs,
+			};
+		}
+
 		return {
 			success: true,
 			message:
 				"I can help with clothing in our store, including product recommendations, comparisons, sizing, shipping, and returns.",
-			intent: classification.intent,
+			needs: classification.needs,
 		};
 	}
 
 	const retrievalQuery = classification.rewrittenQuery || message;
 	const products = await getRelevantProductsForMessage(retrievalQuery);
+	console.log(
+		"Retrieved products for message:",
+		products.map((p) => p.title),
+	);
 	const reply = await generateProductReply({
 		message,
 		history,
@@ -71,7 +92,7 @@ const handleShoppingAssistantMessage = async ({
 	return {
 		success: true,
 		message: reply,
-		intent: classification.intent,
+		needs: classification.needs,
 	};
 };
 

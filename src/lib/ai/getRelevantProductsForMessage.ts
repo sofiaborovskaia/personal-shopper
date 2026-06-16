@@ -24,12 +24,7 @@ const getRelevantProductsForMessage = async (
 					minQualityThreshold: BROAD_QUALITY_THRESHOLD,
 				});
 
-	// If still no results, user might be asking a general question
-	// Provide a sample of products for them to browse
-	const finalItems =
-		items.length > 0 ? items : await getItems({ limit: 10, onlyInStock: true });
-
-	return finalItems;
+	return items;
 };
 
 export default getRelevantProductsForMessage;
