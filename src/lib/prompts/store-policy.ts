@@ -1,4 +1,4 @@
-const STORE_POLICY_SUMMARY = `
+export const STORE_POLICY_SUMMARY = `
 Shipping:
 - Standard shipping within the EU takes 3-5 business days.
 - Express shipping takes 1-2 business days where available.

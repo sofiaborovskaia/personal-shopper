@@ -1,10 +1,14 @@
 import checkMessageModeration from "@/lib/ai/checkMessageModeration";
 import classifyShoppingNeed from "@/lib/ai/classifyShoppingNeed";
+import formatStoreOverviewSummary from "@/lib/ai/formatStoreOverviewSummary";
+import generateCombinedReply from "@/lib/ai/generateCombinedReply";
 import generatePolicyReply from "@/lib/ai/generatePolicyReply";
 import generateProductReply from "@/lib/ai/generateProductReply";
+import generateStoreOverviewReply from "@/lib/ai/generateStoreOverviewReply";
 import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
-import { getItems } from "@/lib/items";
+import { getCategories } from "@/lib/categories";
 import type { ChatMessage } from "@/types/chat";
+import type { Item } from "@prisma/client";
 
 const handleShoppingAssistantMessage = async ({
 	message,
@@ -24,8 +28,27 @@ const handleShoppingAssistantMessage = async ({
 
 	// Decide what context/actions the assistant needs before answering.
 	const classification = await classifyShoppingNeed({ message, history });
+	const needs = classification.needs;
+	const needsPolicyContext = needs.includes("policy_context");
+	const needsStoreOverview = needs.includes("store_overview");
+	const needsProductRetrieval = needs.includes("product_retrieval");
+	const needsPreviousProductContext = needs.includes(
+		"previous_product_context",
+	);
+	const needsStyleAdvice = needs.includes("conversational_style_advice");
+	const needsClarification = needs.includes("clarification");
+	const needsProductGuidance =
+		needsProductRetrieval ||
+		needsPreviousProductContext ||
+		needsStyleAdvice ||
+		needsClarification;
+	const needsShoppingContext = needsStoreOverview || needsProductGuidance;
+	const needsMultiContextReply =
+		[needsPolicyContext, needsStoreOverview, needsProductGuidance].filter(
+			Boolean,
+		).length > 1;
 
-	if (classification.needs.includes("policy_context")) {
+	if (needsPolicyContext && !needsShoppingContext) {
 		const reply = await generatePolicyReply(message, history);
 
 		return {
@@ -35,40 +58,7 @@ const handleShoppingAssistantMessage = async ({
 		};
 	}
 
-	if (classification.needs.includes("store_overview")) {
-		const products = await getItems({ limit: 5, onlyInStock: true });
-		const reply = await generateProductReply({
-			message,
-			history,
-			products,
-		});
-
-		return {
-			success: true,
-			message: reply,
-			needs: classification.needs,
-		};
-	}
-
-	if (!classification.needs.includes("product_retrieval")) {
-		if (
-			classification.needs.includes("previous_product_context") ||
-			classification.needs.includes("conversational_style_advice") ||
-			classification.needs.includes("clarification")
-		) {
-			const reply = await generateProductReply({
-				message,
-				history,
-				products: [],
-			});
-
-			return {
-				success: true,
-				message: reply,
-				needs: classification.needs,
-			};
-		}
-
+	if (!needsShoppingContext) {
 		return {
 			success: true,
 			message:
@@ -77,17 +67,36 @@ const handleShoppingAssistantMessage = async ({
 		};
 	}
 
-	const retrievalQuery = classification.rewrittenQuery || message;
-	const products = await getRelevantProductsForMessage(retrievalQuery);
-	console.log(
-		"Retrieved products for message:",
-		products.map((p) => p.title),
-	);
-	const reply = await generateProductReply({
-		message,
-		history,
-		products,
-	});
+	let products: Item[] = [];
+	if (needsProductGuidance && needsProductRetrieval) {
+		products = await getRelevantProductsForMessage(
+			classification.rewrittenQuery || message,
+		);
+	}
+
+	const storeOverviewSummary = needsStoreOverview
+		? formatStoreOverviewSummary(await getCategories())
+		: undefined;
+
+	let reply: string | null;
+	if (needsMultiContextReply) {
+		reply = await generateCombinedReply({
+			message,
+			history,
+			products,
+			includeProductContext: needsProductGuidance,
+			includePolicyContext: needsPolicyContext,
+			storeOverviewSummary,
+		});
+	} else if (needsStoreOverview && storeOverviewSummary) {
+		reply = await generateStoreOverviewReply({
+			message,
+			history,
+			storeOverviewSummary,
+		});
+	} else {
+		reply = await generateProductReply({ message, history, products });
+	}
 
 	return {
 		success: true,
