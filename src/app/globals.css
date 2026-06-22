@@ -81,7 +81,6 @@ h3 {
 /* Neon Button - for dark backgrounds */
 .neonButton {
 	display: block;
-	margin-inline: auto;
 	font-size: 1rem;
 	max-width: fit-content;
 
@@ -122,6 +121,27 @@ h3 {
 }
 
 .solidButton:hover {
+	box-shadow: 0 8px 10px var(--magenta-2);
+	transform: translateY(2px);
+}
+
+/* Ghost Button */
+.ghostButton {
+	max-width: fit-content;
+	padding: 0.75rem 2rem;
+	border: 1px solid rgba(255, 255, 255, 0.28);
+	border-radius: 100px;
+	background: transparent;
+	color: var(--white);
+
+	font-size: 1rem;
+	font-weight: 500;
+
+	cursor: pointer;
+	transition: all 0.3s ease;
+}
+
+.ghostButton:hover {
 	box-shadow: 0 8px 10px var(--magenta-2);
 	transform: translateY(2px);
 }

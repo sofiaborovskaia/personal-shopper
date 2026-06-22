@@ -1,5 +1,7 @@
 .main {
 	padding: 2rem;
+	background:
+		linear-gradient(135deg, #ff81f214, transparent 32%), var(--grey-1);
 }
 
 .footer {

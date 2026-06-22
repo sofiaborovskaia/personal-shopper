@@ -15,25 +15,30 @@ export default function CategoryFilter({ categories }: CategoryFilterProps) {
 
 	return (
 		<nav className={styles.categoryFilter}>
-			<Link
-				href="/items"
-				className={`${styles.categoryTab} ${
-					!selectedCategory ? styles.categoryTabActive : ""
-				}`}
-			>
-				All
-			</Link>
-			{categories.map((category) => (
+			<div className={styles.categoryLinks}>
 				<Link
-					key={category.slug}
-					href={`/items?category=${category.slug}`}
+					href="/items"
 					className={`${styles.categoryTab} ${
-						selectedCategory === category.slug ? styles.categoryTabActive : ""
+						!selectedCategory ? styles.categoryTabActive : ""
 					}`}
 				>
-					{category.name}
+					All
 				</Link>
-			))}
+				{categories.map((category) => (
+					<Link
+						key={category.slug}
+						href={`/items?category=${category.slug}`}
+						className={`${styles.categoryTab} ${
+							selectedCategory === category.slug ? styles.categoryTabActive : ""
+						}`}
+					>
+						{category.name}
+					</Link>
+				))}
+			</div>
+			<Link href="/personality-builder" className={styles.personalityLink}>
+				Edit assistant's personality
+			</Link>
 		</nav>
 	);
 }
