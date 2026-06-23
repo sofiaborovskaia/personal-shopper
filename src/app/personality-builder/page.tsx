@@ -2,134 +2,16 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import {
+	defaultPersonality,
+	getPersonalityInstruction,
+	getPreviewMessage,
+	personalityPreviewUserMessage,
+	personalitySliders,
+	type PersonalityKey,
+	type PersonalityValues,
+} from "@/lib/personality-builder";
 import styles from "./styles.module.css";
-
-type PersonalityKey =
-	| "casualFormal"
-	| "playfulSerious"
-	| "warmDistant"
-	| "enthusiasticNeutral"
-	| "conciseDetailed"
-	| "spontaneousStructured";
-
-type PersonalityValues = Record<PersonalityKey, number>;
-
-type PersonalitySlider = {
-	key: PersonalityKey;
-	leftLabel: string;
-	rightLabel: string;
-	ariaLabel: string;
-};
-
-const defaultPersonality: PersonalityValues = {
-	casualFormal: 35,
-	playfulSerious: 40,
-	warmDistant: 25,
-	enthusiasticNeutral: 35,
-	conciseDetailed: 40,
-	spontaneousStructured: 45,
-};
-
-const sliders: PersonalitySlider[] = [
-	{
-		key: "casualFormal",
-		leftLabel: "Casual",
-		rightLabel: "Formal",
-		ariaLabel: "Casual to formal tone",
-	},
-	{
-		key: "playfulSerious",
-		leftLabel: "Playful",
-		rightLabel: "Serious",
-		ariaLabel: "Playful to serious tone",
-	},
-	{
-		key: "warmDistant",
-		leftLabel: "Warm",
-		rightLabel: "Distant",
-		ariaLabel: "Warm to distant tone",
-	},
-	{
-		key: "enthusiasticNeutral",
-		leftLabel: "Enthusiastic",
-		rightLabel: "Neutral",
-		ariaLabel: "Enthusiastic to neutral tone",
-	},
-	{
-		key: "conciseDetailed",
-		leftLabel: "Concise",
-		rightLabel: "Detailed",
-		ariaLabel: "Concise to detailed answers",
-	},
-	{
-		key: "spontaneousStructured",
-		leftLabel: "Spontaneous",
-		rightLabel: "Structured",
-		ariaLabel: "Spontaneous to structured suggestions",
-	},
-];
-
-function getLeaning(
-	value: number,
-	left: string,
-	right: string,
-	softLeft: string,
-	softRight: string,
-) {
-	if (value <= 25) return left;
-	if (value < 50) return softLeft;
-	if (value <= 65) return softRight;
-	return right;
-}
-
-function getPersonalityInstruction(values: PersonalityValues) {
-	const warmth = getLeaning(
-		values.warmDistant,
-		"warm",
-		"reserved",
-		"warm",
-		"balanced",
-	);
-	const formality = getLeaning(
-		values.casualFormal,
-		"casual",
-		"formal",
-		"fairly casual",
-		"polished",
-	);
-	const playfulness = getLeaning(
-		values.playfulSerious,
-		"playful",
-		"serious",
-		"lightly playful",
-		"focused",
-	);
-	const detail =
-		values.conciseDetailed < 50
-			? "Keep answers concise unless the user asks for more detail."
-			: "Offer a little extra context when it helps the user decide.";
-	const structure =
-		values.spontaneousStructured < 50
-			? "Make recommendations feel natural and easygoing."
-			: "Organize suggestions clearly so they are easy to compare.";
-
-	return `Respond in a ${warmth}, ${formality}, ${playfulness} style. ${detail} ${structure}`;
-}
-
-function getPreviewMessage(values: PersonalityValues) {
-	const greeting =
-		values.casualFormal < 50 ? "Nice choice" : "Excellent choice";
-	const energy =
-		values.enthusiasticNeutral < 45
-			? "I can help you find something with the right mood, fit, and budget."
-			: "I can help you compare options by style, fit, and budget.";
-	const closer =
-		values.conciseDetailed < 50
-			? "Want a few sharp picks?"
-			: "I can walk you through a few thoughtful options when you are ready.";
-
-	return `${greeting} — ${energy} ${closer}`;
-}
 
 export default function PersonalityBuilderPage() {
 	const [values, setValues] = useState<PersonalityValues>(defaultPersonality);
@@ -181,7 +63,7 @@ export default function PersonalityBuilderPage() {
 					<div className={styles.previewCard} aria-live="polite">
 						<div className={`${styles.previewMessage} ${styles.userMessage}`}>
 							<div className={styles.messageContent}>
-								<p>Can you help me find an outfit that feels easy but special?</p>
+								<p>{personalityPreviewUserMessage}</p>
 							</div>
 						</div>
 						<div
@@ -210,7 +92,7 @@ export default function PersonalityBuilderPage() {
 					</div>
 
 					<div className={styles.sliderList}>
-						{sliders.map((slider) => (
+						{personalitySliders.map((slider) => (
 							<div className={styles.sliderGroup} key={slider.key}>
 								<div className={styles.sliderLabels}>
 									<label htmlFor={slider.key}>{slider.leftLabel}</label>
