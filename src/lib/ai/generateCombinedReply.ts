@@ -1,5 +1,9 @@
 import formatProductSummary from "@/lib/ai/formatProductSummary";
 import generateShoppingAssistantReply from "@/lib/ai/generateShoppingAssistantReply";
+import {
+	appendPersonalityToPrompt,
+	type PersonalityValues,
+} from "@/lib/personality-builder";
 import { getCombinedShoppingAssistantPrompt } from "@/lib/prompts/combined-shopping-assistant";
 import { STORE_POLICY_SUMMARY } from "@/lib/prompts/store-policy";
 import type { ChatMessage } from "@/types/chat";
@@ -9,6 +13,7 @@ const generateCombinedReply = async ({
 	message,
 	history,
 	products,
+	personality,
 	includeProductContext = false,
 	includePolicyContext = false,
 	storeOverviewSummary,
@@ -16,17 +21,21 @@ const generateCombinedReply = async ({
 	message: string;
 	history: ChatMessage[];
 	products: Item[];
+	personality?: PersonalityValues | null;
 	includeProductContext?: boolean;
 	includePolicyContext?: boolean;
 	storeOverviewSummary?: string;
 }) => {
-	const systemMessage = getCombinedShoppingAssistantPrompt({
-		...(includeProductContext
-			? { productSummary: formatProductSummary(products) }
-			: {}),
-		...(includePolicyContext ? { policySummary: STORE_POLICY_SUMMARY } : {}),
-		...(storeOverviewSummary ? { storeOverviewSummary } : {}),
-	});
+	const systemMessage = appendPersonalityToPrompt(
+		getCombinedShoppingAssistantPrompt({
+			...(includeProductContext
+				? { productSummary: formatProductSummary(products) }
+				: {}),
+			...(includePolicyContext ? { policySummary: STORE_POLICY_SUMMARY } : {}),
+			...(storeOverviewSummary ? { storeOverviewSummary } : {}),
+		}),
+		personality,
+	);
 
 	return generateShoppingAssistantReply(message, history, systemMessage);
 };

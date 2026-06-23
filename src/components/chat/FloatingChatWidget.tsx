@@ -5,6 +5,7 @@ import { renderMarkdown } from "./FloatingChatWidget.utils";
 import styles from "./FloatingChatWidget.module.css";
 import type { Message } from "./FloatingChatWidget.types";
 import { sendChatMessage } from "@/app/actions/chat";
+import { readSavedPersonality } from "@/lib/personality-builder";
 
 export default function FloatingChatWidget() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -64,6 +65,7 @@ export default function FloatingChatWidget() {
 					role: msg.role,
 					content: msg.content,
 				})),
+				readSavedPersonality()?.values,
 			);
 
 			if (data.success) {

@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
+	clearSavedPersonality,
 	defaultPersonality,
 	getPersonalityInstruction,
 	getPreviewMessage,
 	personalityPreviewUserMessage,
 	personalitySliders,
+	readSavedPersonality,
+	savePersonality,
 	type PersonalityKey,
 	type PersonalityValues,
 } from "@/lib/personality-builder";
@@ -30,7 +33,17 @@ export default function PersonalityBuilderPage() {
 		}));
 	};
 
+	useEffect(() => {
+		const savedPersonality = readSavedPersonality();
+
+		if (savedPersonality) {
+			setValues(savedPersonality.values);
+			setAppliedInstruction(savedPersonality.instruction);
+		}
+	}, []);
+
 	const resetPersonality = () => {
+		clearSavedPersonality();
 		setValues(defaultPersonality);
 		setAppliedInstruction("");
 	};
@@ -118,7 +131,10 @@ export default function PersonalityBuilderPage() {
 						<button
 							type="button"
 							className="neonButton"
-							onClick={() => setAppliedInstruction(instruction)}
+							onClick={() => {
+								const saved = savePersonality(values);
+								setAppliedInstruction(saved?.instruction ?? instruction);
+							}}
 						>
 							Apply personality
 						</button>

@@ -7,15 +7,18 @@ import generateProductReply from "@/lib/ai/generateProductReply";
 import generateStoreOverviewReply from "@/lib/ai/generateStoreOverviewReply";
 import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
 import { getCategories } from "@/lib/categories";
+import type { PersonalityValues } from "@/lib/personality-builder";
 import type { ChatMessage } from "@/types/chat";
 import type { Item } from "@prisma/client";
 
 const handleShoppingAssistantMessage = async ({
 	message,
 	history,
+	personality,
 }: {
 	message: string;
 	history: ChatMessage[];
+	personality?: PersonalityValues | null;
 }) => {
 	// Moderation: if fails, return the moderation message and abort the chat response
 	const moderation = await checkMessageModeration(message);
@@ -49,7 +52,7 @@ const handleShoppingAssistantMessage = async ({
 		).length > 1;
 
 	if (needsPolicyContext && !needsShoppingContext) {
-		const reply = await generatePolicyReply(message, history);
+		const reply = await generatePolicyReply(message, history, personality);
 
 		return {
 			success: true,
@@ -84,6 +87,7 @@ const handleShoppingAssistantMessage = async ({
 			message,
 			history,
 			products,
+			personality,
 			includeProductContext: needsProductGuidance,
 			includePolicyContext: needsPolicyContext,
 			storeOverviewSummary,
@@ -92,10 +96,16 @@ const handleShoppingAssistantMessage = async ({
 		reply = await generateStoreOverviewReply({
 			message,
 			history,
+			personality,
 			storeOverviewSummary,
 		});
 	} else {
-		reply = await generateProductReply({ message, history, products });
+		reply = await generateProductReply({
+			message,
+			history,
+			personality,
+			products,
+		});
 	}
 
 	return {

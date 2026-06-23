@@ -15,6 +15,12 @@ export type PersonalitySlider = {
 	ariaLabel: string;
 };
 
+export type SavedPersonality = {
+	values: PersonalityValues;
+	instruction: string;
+	updatedAt: string;
+};
+
 type ToneScale = {
 	lowExtreme: string;
 	low: string;
@@ -22,6 +28,8 @@ type ToneScale = {
 	high: string;
 	highExtreme: string;
 };
+
+export const PERSONALITY_STORAGE_KEY = "shoppingAssistantPersonality";
 
 export const defaultPersonality: PersonalityValues = {
 	casualFormal: 35,
@@ -73,6 +81,15 @@ export const personalitySliders: PersonalitySlider[] = [
 
 export const personalityPreviewUserMessage =
 	"Can you help me find an outfit that feels easy but special?";
+
+const personalityKeys: PersonalityKey[] = [
+	"casualFormal",
+	"playfulSerious",
+	"warmDistant",
+	"enthusiasticNeutral",
+	"conciseDetailed",
+	"spontaneousStructured",
+];
 
 function describeTone(value: number, scale: ToneScale) {
 	if (value <= 8) return scale.lowExtreme;
@@ -136,6 +153,34 @@ export function getPersonalityInstruction(values: PersonalityValues) {
 	return `Respond in a ${warmth}, ${formality}, ${playfulness}, ${enthusiasm} style. ${detail} ${structure}`;
 }
 
+export function getAssistantPersonalityPrompt(values?: PersonalityValues | null) {
+	if (!values) {
+		return "";
+	}
+
+	return `
+Assistant personality:
+- ${getPersonalityInstruction(values)}
+- Let the personality be vivid and noticeable, especially when a trait is near an extreme.
+- Do not explain or mention the personality settings to the customer.
+- Style can be theatrical, cold, casual, formal, warm, or severe, but the shopping help must remain clear and useful.
+- Product, inventory, store overview, and policy rules are higher priority than personality. Do not invent products, policies, categories, links, prices, colors, materials, or stock details for the sake of the persona.
+`.trim();
+}
+
+export function appendPersonalityToPrompt(
+	basePrompt: string,
+	values?: PersonalityValues | null,
+) {
+	const personalityPrompt = getAssistantPersonalityPrompt(values);
+
+	if (!personalityPrompt) {
+		return basePrompt;
+	}
+
+	return `${basePrompt}\n\n${personalityPrompt}`;
+}
+
 export function getPreviewMessage(values: PersonalityValues) {
 	if (values.casualFormal <= 8) {
 		return "Oh absolutely. We are doing easy-but-special without making it look like you held a board meeting in your closet. I’d start with one strong piece, then let everything else chill.";
@@ -165,4 +210,99 @@ export function getPreviewMessage(values: PersonalityValues) {
 			: "I can walk you through a few thoughtful options when you are ready.";
 
 	return `${greeting} — ${energy} ${closer}`;
+}
+
+function normalizePersonalityValue(value: unknown) {
+	if (typeof value !== "number" || Number.isNaN(value)) {
+		return null;
+	}
+
+	return Math.max(0, Math.min(100, Math.round(value)));
+}
+
+export function normalizePersonalityValues(
+	value: unknown,
+): PersonalityValues | null {
+	if (!value || typeof value !== "object") {
+		return null;
+	}
+
+	const candidate = value as Partial<Record<PersonalityKey, unknown>>;
+	const normalized = {} as PersonalityValues;
+
+	for (const key of personalityKeys) {
+		const traitValue = normalizePersonalityValue(candidate[key]);
+
+		if (traitValue === null) {
+			return null;
+		}
+
+		normalized[key] = traitValue;
+	}
+
+	return normalized;
+}
+
+export function createSavedPersonality(
+	values: PersonalityValues,
+): SavedPersonality {
+	return {
+		values,
+		instruction: getPersonalityInstruction(values),
+		updatedAt: new Date().toISOString(),
+	};
+}
+
+export function readSavedPersonality(): SavedPersonality | null {
+	if (typeof window === "undefined") {
+		return null;
+	}
+
+	const rawValue = window.localStorage.getItem(PERSONALITY_STORAGE_KEY);
+	if (!rawValue) {
+		return null;
+	}
+
+	try {
+		const parsed = JSON.parse(rawValue) as Partial<SavedPersonality>;
+		const values = normalizePersonalityValues(parsed.values);
+
+		if (!values) {
+			return null;
+		}
+
+		return {
+			values,
+			instruction: getPersonalityInstruction(values),
+			updatedAt:
+				typeof parsed.updatedAt === "string"
+					? parsed.updatedAt
+					: new Date().toISOString(),
+		};
+	} catch (error) {
+		console.error("Error reading saved assistant personality:", error);
+		return null;
+	}
+}
+
+export function savePersonality(values: PersonalityValues) {
+	if (typeof window === "undefined") {
+		return null;
+	}
+
+	const savedPersonality = createSavedPersonality(values);
+	window.localStorage.setItem(
+		PERSONALITY_STORAGE_KEY,
+		JSON.stringify(savedPersonality),
+	);
+
+	return savedPersonality;
+}
+
+export function clearSavedPersonality() {
+	if (typeof window === "undefined") {
+		return;
+	}
+
+	window.localStorage.removeItem(PERSONALITY_STORAGE_KEY);
 }
