@@ -179,15 +179,21 @@ export default function PersonalityBuilderPage() {
 					</div>
 
 					<div className={styles.previewCard} aria-live="polite">
-						<div className={styles.previewHeader}>
-							<span className={styles.avatar} aria-hidden="true">
-								AI
-							</span>
-							<div>
-								<p>Assistant message</p>
+						<div className={`${styles.previewMessage} ${styles.userMessage}`}>
+							<div className={styles.messageContent}>
+								<p>Can you help me find an outfit that feels easy but special?</p>
 							</div>
 						</div>
-						<p className={styles.previewMessage}>{previewMessage}</p>
+						<div
+							className={`${styles.previewMessage} ${styles.assistantMessage}`}
+						>
+							<div className={styles.avatar} aria-hidden="true">
+								🤖
+							</div>
+							<div className={styles.messageContent}>
+								<p>{previewMessage}</p>
+							</div>
+						</div>
 					</div>
 
 					{appliedInstruction && (

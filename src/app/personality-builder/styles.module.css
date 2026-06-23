@@ -41,7 +41,7 @@
 	position: relative;
 	z-index: 1;
 	display: grid;
-	grid-template-columns: minmax(0, 0.92fr) minmax(18rem, 1.08fr);
+	grid-template-columns: minmax(0, 1fr) minmax(18rem, 1fr);
 	gap: 3rem;
 	width: min(100%, 1080px);
 	margin: 0 auto;
@@ -93,13 +93,12 @@
 	margin-bottom: 0.7rem;
 	color: var(--magenta-2);
 	font-size: 0.76rem;
-	font-weight: 700;
+	font-weight: 600;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
 }
 
 .title {
-	max-width: 10ch;
 	font-size: clamp(2rem, 5vw, 3.6rem);
 	font-weight: 400;
 	line-height: 0.9;
@@ -116,53 +115,74 @@
 .previewCard {
 	display: flex;
 	flex-direction: column;
-	gap: 1.35rem;
+	gap: 0.75rem;
 	max-width: 34rem;
 	padding: 1.25rem;
-	border: 1px solid rgba(255, 255, 255, 0.14);
+	color: var(--white);
 	border-radius: 20px;
-	background: rgba(255, 255, 255, 0.88);
-	color: var(--grey-1);
-	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2);
+	/* background: linear-gradient(
+		to bottom,
+		rgba(217, 78, 212, 0.34),
+		rgba(145, 145, 145, 0.18)
+	); */
+	/* border: 1px solid rgba(255, 255, 255, 0.14); */
+	/* box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2); */
+	/* backdrop-filter: blur(10px); */
 }
 
-.previewHeader {
+.previewMessage {
 	display: flex;
-	align-items: center;
-	gap: 0.85rem;
+	gap: 8px;
+}
+
+.userMessage {
+	justify-content: flex-end;
+}
+
+.assistantMessage {
+	justify-content: flex-start;
+	align-items: flex-end;
 }
 
 .avatar {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 2.6rem;
-	height: 2.6rem;
+	width: 32px;
+	height: 32px;
 	flex: 0 0 auto;
 	border-radius: 50%;
-	background: var(--magenta-2);
-	color: var(--grey-1);
-	font-size: 0.82rem;
-	font-weight: 800;
-	box-shadow: 0 0 22px rgba(255, 129, 242, 0.7);
+	background: radial-gradient(circle, #fff 10%, rgba(0, 0, 0, 0) 70%);
+	filter: grayscale(1);
+	font-size: 18px;
 }
 
-.previewHeader h2,
+.messageContent {
+	max-width: 75%;
+	padding: 10px 14px;
+	border-radius: 12px;
+	background: white;
+	color: #1f2937;
+	word-wrap: break-word;
+}
+
+.userMessage .messageContent {
+	border-radius: 12px 12px 4px 12px;
+}
+
+.assistantMessage .messageContent {
+	border-radius: 12px 12px 12px 4px;
+}
+
+.messageContent p {
+	font-size: 14px;
+	line-height: 1.5;
+}
+
 .controlsHeader h2 {
 	font-family: var(--font-benton-sans), Arial, sans-serif;
 	font-size: 1rem;
 	font-weight: 700;
-}
-
-.previewHeader p {
-	margin-top: 0.2rem;
-	color: rgba(38, 38, 38, 0.64);
-	font-size: 0.84rem;
-}
-
-.previewMessage {
-	font-size: 1.25rem;
-	line-height: 1.55;
 }
 
 .appliedMessage {
@@ -205,7 +225,7 @@
 	width: 100%;
 	height: 1.7rem;
 	background: transparent;
-	accent-color: var(--magenta-2);
+	accent-color: var(--white);
 	cursor: pointer;
 }
 
@@ -224,10 +244,8 @@
 	width: 1.25rem;
 	height: 1.25rem;
 	margin-top: -0.4rem;
-	border: 2px solid var(--white);
 	border-radius: 50%;
-	background: var(--magenta-2);
-	box-shadow: 0 0 18px rgba(255, 129, 242, 0.85);
+	/* box-shadow: 0 0 10px white; */
 	appearance: none;
 }
 
@@ -240,10 +258,8 @@
 .slider::-moz-range-thumb {
 	width: 1.25rem;
 	height: 1.25rem;
-	border: 2px solid var(--white);
 	border-radius: 50%;
-	background: var(--magenta-2);
-	box-shadow: 0 0 18px rgba(255, 129, 242, 0.85);
+	box-shadow: 0 0 10px white;
 }
 
 .actions {
@@ -260,8 +276,6 @@
 
 	.panel {
 		grid-template-columns: 1fr;
-		gap: 2rem;
-		border-radius: 0;
 	}
 }
 
