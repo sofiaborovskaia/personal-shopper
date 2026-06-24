@@ -1,7 +1,7 @@
 "use server";
 
 import handleShoppingAssistantMessage from "@/lib/ai/handleShoppingAssistantMessage";
-import { normalizePersonalityValues } from "@/lib/personality-builder";
+import { normalizePersonalityValues } from "@/lib/personality";
 import type { ChatMessage } from "@/types/chat";
 
 export async function sendChatMessage(

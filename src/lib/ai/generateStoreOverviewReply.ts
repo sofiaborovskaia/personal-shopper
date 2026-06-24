@@ -1,9 +1,6 @@
 import generateShoppingAssistantReply from "@/lib/ai/generateShoppingAssistantReply";
-import {
-	appendPersonalityToPrompt,
-	type PersonalityValues,
-} from "@/lib/personality-builder";
 import { getStoreOverviewPrompt } from "@/lib/prompts/store-overview";
+import type { PersonalityValues } from "@/lib/personality";
 import type { ChatMessage } from "@/types/chat";
 
 const generateStoreOverviewReply = async ({
@@ -20,10 +17,8 @@ const generateStoreOverviewReply = async ({
 	return generateShoppingAssistantReply(
 		message,
 		history,
-		appendPersonalityToPrompt(
-			getStoreOverviewPrompt(storeOverviewSummary),
-			personality,
-		),
+		getStoreOverviewPrompt(storeOverviewSummary),
+		personality,
 	);
 };
 

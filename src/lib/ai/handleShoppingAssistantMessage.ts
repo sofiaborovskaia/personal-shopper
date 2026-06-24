@@ -7,7 +7,7 @@ import generateProductReply from "@/lib/ai/generateProductReply";
 import generateStoreOverviewReply from "@/lib/ai/generateStoreOverviewReply";
 import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
 import { getCategories } from "@/lib/categories";
-import type { PersonalityValues } from "@/lib/personality-builder";
+import type { PersonalityValues } from "@/lib/personality";
 import type { ChatMessage } from "@/types/chat";
 import type { Item } from "@prisma/client";
 

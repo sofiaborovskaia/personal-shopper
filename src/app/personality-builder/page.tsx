@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
 	clearSavedPersonality,
 	defaultPersonality,
-	getPersonalityInstruction,
 	getPreviewMessage,
 	personalityPreviewUserMessage,
 	personalitySliders,
@@ -13,7 +12,8 @@ import {
 	savePersonality,
 	type PersonalityKey,
 	type PersonalityValues,
-} from "@/lib/personality-builder";
+} from "@/lib/personality";
+import { getPersonalityInstruction } from "@/lib/prompts/personality";
 import styles from "./styles.module.css";
 
 export default function PersonalityBuilderPage() {
