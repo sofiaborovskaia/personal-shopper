@@ -9,6 +9,7 @@
 	border-radius: 999px;
 	filter: blur(38px);
 	opacity: 0.55;
+	will-change: transform, opacity;
 }
 
 .glowPink {
@@ -17,6 +18,7 @@
 	width: 18rem;
 	height: 18rem;
 	background: var(--magenta-2);
+	animation: driftPink 18s ease-in-out infinite alternate;
 }
 
 .glowCyan {
@@ -26,6 +28,7 @@
 	height: 10rem;
 	background: var(--teal-2);
 	transform: rotate(-18deg);
+	animation: driftCyan 23s ease-in-out infinite alternate;
 }
 
 .glowOrange {
@@ -35,6 +38,72 @@
 	height: 14rem;
 	background: var(--orange-2);
 	opacity: 0.35;
+	animation: driftOrange 20s ease-in-out infinite alternate;
+}
+
+@keyframes driftPink {
+	0% {
+		opacity: 0.42;
+		transform: translate3d(0, 0, 0) scale(0.85);
+	}
+	38% {
+		opacity: 0.66;
+		transform: translate3d(-8rem, 5rem, 0) scale(1.18);
+	}
+	72% {
+		opacity: 0.5;
+		transform: translate3d(4rem, 10rem, 0) scale(0.98);
+	}
+	100% {
+		opacity: 0.7;
+		transform: translate3d(-3rem, -2rem, 0) scale(1.34);
+	}
+}
+
+@keyframes driftCyan {
+	0% {
+		opacity: 0.42;
+		transform: translate3d(0, 0, 0) rotate(-18deg) scale(0.9);
+	}
+	35% {
+		opacity: 0.68;
+		transform: translate3d(8rem, -4rem, 0) rotate(-7deg) scale(1.24);
+	}
+	68% {
+		opacity: 0.48;
+		transform: translate3d(2rem, -10rem, 0) rotate(-24deg) scale(0.78);
+	}
+	100% {
+		opacity: 0.62;
+		transform: translate3d(13rem, 2rem, 0) rotate(4deg) scale(1.08);
+	}
+}
+
+@keyframes driftOrange {
+	0% {
+		opacity: 0.3;
+		transform: translate3d(0, 0, 0) scale(0.72);
+	}
+	42% {
+		opacity: 0.48;
+		transform: translate3d(-10rem, -6rem, 0) scale(1.25);
+	}
+	74% {
+		opacity: 0.38;
+		transform: translate3d(5rem, -12rem, 0) scale(0.92);
+	}
+	100% {
+		opacity: 0.55;
+		transform: translate3d(-2rem, 4rem, 0) scale(1.42);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.glowPink,
+	.glowCyan,
+	.glowOrange {
+		animation: none;
+	}
 }
 
 .panel {
@@ -120,14 +189,6 @@
 	padding: 1.25rem;
 	color: var(--white);
 	border-radius: 20px;
-	/* background: linear-gradient(
-		to bottom,
-		rgba(217, 78, 212, 0.34),
-		rgba(145, 145, 145, 0.18)
-	); */
-	/* border: 1px solid rgba(255, 255, 255, 0.14); */
-	/* box-shadow: 0 18px 50px rgba(0, 0, 0, 0.2); */
-	/* backdrop-filter: blur(10px); */
 }
 
 .previewMessage {
