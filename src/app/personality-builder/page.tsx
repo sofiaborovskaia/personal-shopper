@@ -14,17 +14,34 @@ import {
 	type PersonalityValues,
 } from "@/lib/personality";
 import { getPersonalityInstruction } from "@/lib/prompts/personality";
+import { generatePersonalityPreview } from "./actions";
 import styles from "./styles.module.css";
+
+function personalityValuesMatch(
+	first: PersonalityValues,
+	second: PersonalityValues,
+) {
+	return personalitySliders.every(
+		(slider) => first[slider.key] === second[slider.key],
+	);
+}
 
 export default function PersonalityBuilderPage() {
 	const [values, setValues] = useState<PersonalityValues>(defaultPersonality);
+	const [appliedValues, setAppliedValues] =
+		useState<PersonalityValues>(defaultPersonality);
 	const [appliedInstruction, setAppliedInstruction] = useState("");
+	const [appliedPreviewMessage, setAppliedPreviewMessage] = useState(
+		getPreviewMessage(defaultPersonality),
+	);
+	const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
 
 	const instruction = useMemo(
 		() => getPersonalityInstruction(values),
 		[values],
 	);
 	const previewMessage = useMemo(() => getPreviewMessage(values), [values]);
+	const hasUnsavedChanges = !personalityValuesMatch(values, appliedValues);
 
 	const updateValue = (key: PersonalityKey, value: number) => {
 		setValues((current) => ({
@@ -38,14 +55,44 @@ export default function PersonalityBuilderPage() {
 
 		if (savedPersonality) {
 			setValues(savedPersonality.values);
+			setAppliedValues(savedPersonality.values);
 			setAppliedInstruction(savedPersonality.instruction);
+			setAppliedPreviewMessage(savedPersonality.previewMessage);
 		}
 	}, []);
 
 	const resetPersonality = () => {
 		clearSavedPersonality();
 		setValues(defaultPersonality);
+		setAppliedValues(defaultPersonality);
 		setAppliedInstruction("");
+		setAppliedPreviewMessage(getPreviewMessage(defaultPersonality));
+		setIsGeneratingPreview(false);
+	};
+
+	const applyPersonality = async () => {
+		setIsGeneratingPreview(true);
+
+		try {
+			const preview = await generatePersonalityPreview(values);
+			const nextPreviewMessage = preview.success
+				? preview.message
+				: previewMessage;
+			const saved = savePersonality(values, nextPreviewMessage);
+
+			setAppliedValues(values);
+			setAppliedInstruction(saved?.instruction ?? instruction);
+			setAppliedPreviewMessage(nextPreviewMessage);
+		} catch (error) {
+			console.error("Error applying personality preview:", error);
+			const saved = savePersonality(values, previewMessage);
+
+			setAppliedValues(values);
+			setAppliedInstruction(saved?.instruction ?? instruction);
+			setAppliedPreviewMessage(previewMessage);
+		} finally {
+			setIsGeneratingPreview(false);
+		}
 	};
 
 	return (
@@ -80,16 +127,32 @@ export default function PersonalityBuilderPage() {
 							</div>
 						</div>
 						<div
-							className={`${styles.previewMessage} ${styles.assistantMessage}`}
+							className={`${styles.previewMessage} ${
+								styles.assistantMessage
+							} ${
+								hasUnsavedChanges && !isGeneratingPreview
+									? styles.staleMessage
+									: ""
+							}`}
 						>
 							<div className={styles.avatar} aria-hidden="true">
 								🤖
 							</div>
 							<div className={styles.messageContent}>
-								<p>{previewMessage}</p>
+								<p>
+									{isGeneratingPreview
+										? "Shaping the assistant voice..."
+										: appliedPreviewMessage}
+								</p>
 							</div>
 						</div>
 					</div>
+
+					{hasUnsavedChanges && !isGeneratingPreview && (
+						<p className={styles.unsavedMessage} role="status">
+							Unsaved changes. Apply to refresh preview.
+						</p>
+					)}
 
 					{appliedInstruction && (
 						<p className={styles.appliedMessage} role="status">
@@ -131,12 +194,10 @@ export default function PersonalityBuilderPage() {
 						<button
 							type="button"
 							className="neonButton"
-							onClick={() => {
-								const saved = savePersonality(values);
-								setAppliedInstruction(saved?.instruction ?? instruction);
-							}}
+							onClick={applyPersonality}
+							disabled={isGeneratingPreview}
 						>
-							Apply personality
+							{isGeneratingPreview ? "Applying..." : "Apply personality"}
 						</button>
 						<button
 							type="button"

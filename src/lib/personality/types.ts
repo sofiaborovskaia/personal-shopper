@@ -19,5 +19,6 @@ export type PersonalitySlider = {
 export type SavedPersonality = {
 	values: PersonalityValues;
 	instruction: string;
+	previewMessage: string;
 	updatedAt: string;
 };

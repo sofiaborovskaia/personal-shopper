@@ -1,14 +1,17 @@
 import { getPersonalityInstruction } from "@/lib/prompts/personality";
 import { PERSONALITY_STORAGE_KEY } from "./config";
+import { getPreviewMessage } from "./preview";
 import { normalizePersonalityValues } from "./values";
 import type { PersonalityValues, SavedPersonality } from "./types";
 
 export function createSavedPersonality(
 	values: PersonalityValues,
+	previewMessage = getPreviewMessage(values),
 ): SavedPersonality {
 	return {
 		values,
 		instruction: getPersonalityInstruction(values),
+		previewMessage,
 		updatedAt: new Date().toISOString(),
 	};
 }
@@ -34,6 +37,11 @@ export function readSavedPersonality(): SavedPersonality | null {
 		return {
 			values,
 			instruction: getPersonalityInstruction(values),
+			previewMessage:
+				typeof parsed.previewMessage === "string" &&
+				parsed.previewMessage.trim()
+					? parsed.previewMessage.trim()
+					: getPreviewMessage(values),
 			updatedAt:
 				typeof parsed.updatedAt === "string"
 					? parsed.updatedAt
@@ -45,12 +53,15 @@ export function readSavedPersonality(): SavedPersonality | null {
 	}
 }
 
-export function savePersonality(values: PersonalityValues) {
+export function savePersonality(
+	values: PersonalityValues,
+	previewMessage?: string,
+) {
 	if (typeof window === "undefined") {
 		return null;
 	}
 
-	const savedPersonality = createSavedPersonality(values);
+	const savedPersonality = createSavedPersonality(values, previewMessage);
 	window.localStorage.setItem(
 		PERSONALITY_STORAGE_KEY,
 		JSON.stringify(savedPersonality),
