@@ -40,6 +40,7 @@ const handleShoppingAssistantMessage = async ({
 	);
 	const needsStyleAdvice = needs.includes("conversational_style_advice");
 	const needsClarification = needs.includes("clarification");
+
 	const needsProductGuidance =
 		needsProductRetrieval ||
 		needsPreviousProductContext ||

@@ -4,28 +4,32 @@ export const personalityPreviewUserMessage =
 	"Can you help me find an outfit that feels easy but special?";
 
 export function getPreviewMessage(values: PersonalityValues) {
-	if (values.casualFormal <= 8) {
-		return "Oh absolutely. We are doing easy-but-special without making it look like you held a board meeting in your closet. I’d start with one strong piece, then let everything else chill.";
+	if (values.casualPolished <= 8) {
+		return "Oh completely. We are making this look effortless, not like the outfit had to pass a committee vote. One strong piece, everything else gets to relax.";
 	}
 
-	if (values.warmDistant >= 92) {
-		return "Yes. Select one elevated focal item, keep the rest restrained, and avoid unnecessary softness. The outfit should communicate intention, not sentiment.";
+	if (values.calmEnergetic >= 92) {
+		return "Yes. Let’s give it voltage: one sharp statement piece, a clean base, and enough momentum that the outfit enters the room slightly before you do.";
 	}
 
-	if (values.playfulSerious <= 8) {
-		return "Yes. We need one little spark, one calm anchor, and absolutely no outfit that whispers spreadsheet. Let’s make it useful, but with a wink.";
+	if (values.sweetSassy >= 92) {
+		return "Absolutely. We’ll keep it useful, but with a little eyebrow raise. Polished enough to work, spicy enough to avoid disappearing into the wallpaper.";
 	}
 
-	if (values.playfulSerious >= 92) {
-		return "Yes. Choose a clean silhouette, one refined detail, and limited contrast. The result should be controlled, appropriate, and quietly distinctive.";
+	if (values.warmReserved >= 92) {
+		return "Yes. Choose one elevated focal item, keep the rest controlled, and avoid unnecessary sentiment. The outfit should communicate intention with minimal fuss.";
+	}
+
+	if (values.classicCreative >= 92) {
+		return "Yes. Let’s keep the silhouette wearable, then bend one detail sideways: texture, color, or proportion. Familiar enough to function, strange enough to feel alive.";
 	}
 
 	const greeting =
-		values.casualFormal < 50 ? "Nice choice" : "Excellent choice";
+		values.casualPolished < 50 ? "Nice choice" : "Excellent choice";
 	const energy =
-		values.enthusiasticNeutral < 45
-			? "I can help you find something with the right mood, fit, and budget."
-			: "I can help you compare options by style, fit, and budget.";
+		values.calmEnergetic >= 55
+			? "I can help you find something with presence, rhythm, and the right kind of spark."
+			: "I can help you find something with the right mood, fit, and budget.";
 	const closer =
 		values.conciseDetailed < 50
 			? "Want a few sharp picks?"

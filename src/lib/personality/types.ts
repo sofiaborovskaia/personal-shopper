@@ -1,10 +1,11 @@
 export type PersonalityKey =
-	| "casualFormal"
-	| "playfulSerious"
-	| "warmDistant"
-	| "enthusiasticNeutral"
+	| "casualPolished"
+	| "playfulStraightforward"
+	| "sweetSassy"
+	| "warmReserved"
+	| "calmEnergetic"
 	| "conciseDetailed"
-	| "spontaneousStructured";
+	| "classicCreative";
 
 export type PersonalityValues = Record<PersonalityKey, number>;
 
