@@ -36,7 +36,7 @@ export default function CategoryFilter({ categories }: CategoryFilterProps) {
 					</Link>
 				))}
 			</div>
-			<Link href="/personality-builder" className={styles.personalityLink}>
+			<Link href="/personality-builder" className="neonButton">
 				Edit assistant's personality
 			</Link>
 		</nav>
