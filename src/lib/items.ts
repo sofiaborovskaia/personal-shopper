@@ -115,7 +115,26 @@ export async function searchItemsBySemantic(
 
 	if (onlyInStock) {
 		items = await prisma.$queryRaw<ItemWithDistance[]>`
-			SELECT *, (embedding <=> ${vectorString}::vector) as distance
+			SELECT
+				id,
+				sku,
+				title,
+				subtitle,
+				slug,
+				description,
+				type,
+				brand,
+				category,
+				price_cents AS "priceCents",
+				currency,
+				available,
+				stock,
+				colors,
+				sizes,
+				materials,
+				created_at AS "createdAt",
+				updated_at AS "updatedAt",
+				(embedding <=> ${vectorString}::vector) AS distance
 			FROM "Item"
 			WHERE "available" = true
 			ORDER BY embedding <=> ${vectorString}::vector
@@ -123,7 +142,26 @@ export async function searchItemsBySemantic(
 		`;
 	} else {
 		items = await prisma.$queryRaw<ItemWithDistance[]>`
-			SELECT *, (embedding <=> ${vectorString}::vector) as distance
+			SELECT
+				id,
+				sku,
+				title,
+				subtitle,
+				slug,
+				description,
+				type,
+				brand,
+				category,
+				price_cents AS "priceCents",
+				currency,
+				available,
+				stock,
+				colors,
+				sizes,
+				materials,
+				created_at AS "createdAt",
+				updated_at AS "updatedAt",
+				(embedding <=> ${vectorString}::vector) AS distance
 			FROM "Item"
 			ORDER BY embedding <=> ${vectorString}::vector
 			LIMIT ${limit}

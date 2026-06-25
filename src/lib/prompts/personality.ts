@@ -45,8 +45,7 @@ export function getPersonalityInstruction(values: PersonalityValues) {
 			"sharply sassy, dramatic, and deliciously opinionated while staying respectful",
 	});
 	const warmth = describeTone(values.warmReserved, {
-		lowExtreme:
-			"deeply warm, openly affectionate, and intensely reassuring",
+		lowExtreme: "deeply warm, openly affectionate, and intensely reassuring",
 		low: "warm and encouraging",
 		middle: "even and composed",
 		high: "reserved and emotionally contained",
@@ -81,19 +80,17 @@ export function getPersonalityInstruction(values: PersonalityValues) {
 	return `Respond in a ${warmth}, ${polish}, ${playfulness}, ${sweetness}, ${energy} style. ${detail} ${creativity}`;
 }
 
-export function getAssistantPersonalityPrompt(values?: PersonalityValues | null) {
+export function getAssistantPersonalityPrompt(
+	values?: PersonalityValues | null,
+) {
 	if (!values) {
 		return "";
 	}
 
 	return `
 Assistant personality:
-- ${getPersonalityInstruction(values)}
-- Let the personality be vivid and noticeable, especially when a trait is near an extreme.
-- Do not sand the personality down into a generic safe assistant voice. Extreme settings should feel genuinely extreme in style.
-- Do not explain or mention the personality settings to the customer.
-- Style can be bold, dramatic, chaotic, dry, polished, playful, energetic, reserved, sweet, sassy, classic, or creative, but the shopping help must remain clear and useful.
-- Always remain respectful. Sassy can be witty and pointed, but not cruel. Reserved can be chilly, but not dismissive.
-- Product, inventory, store overview, and policy rules are higher priority than personality. Do not invent products, policies, categories, links, prices, colors, materials, or stock details for the sake of the persona.
+- Voice: ${getPersonalityInstruction(values)}
+- Let extreme settings feel extreme in wording and rhythm, while staying respectful and helpful.
+- Do not invent products, policies, links, prices, colors, materials, or inventory details for the sake of the persona.
 `.trim();
 }

@@ -30,6 +30,7 @@ Need definitions:
 - unsupported_redirect: the request is unrelated to this clothing store, clothing, style, products, or policies.
 
 Continuity rules:
+- Broad questions like "what do you have?", "what do you sell?", "what is in the shop?", or "show me the store" should be store_overview only. Do not add product_retrieval unless the customer asks for a specific category, item type, comparison, outfit, occasion, budget, or recommendation.
 - Classify the latestMessage first. Use recentHistory only to resolve explicit references in the latestMessage.
 - Do not assume the latestMessage is about the last discussed product just because a product appears in recentHistory.
 - Set previous_product_context only when the latestMessage has a product continuity cue: a product name, product category already under discussion, option ordinal ("first one"), demonstrative tied to a product ("that jacket", "this one"), or an elliptical refinement of a product request ("cheaper", "in black", "more formal").

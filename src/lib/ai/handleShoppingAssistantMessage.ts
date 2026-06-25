@@ -41,18 +41,20 @@ const handleShoppingAssistantMessage = async ({
 	const needsStyleAdvice = needs.includes("conversational_style_advice");
 	const needsClarification = needs.includes("clarification");
 
-	const needsProductGuidance =
-		needsProductRetrieval ||
-		needsPreviousProductContext ||
+	const needsProductContext =
+		needsProductRetrieval || needsPreviousProductContext;
+	const needsShoppingReply =
+		needsStoreOverview ||
+		needsProductContext ||
 		needsStyleAdvice ||
 		needsClarification;
-	const needsShoppingContext = needsStoreOverview || needsProductGuidance;
-	const needsMultiContextReply =
-		[needsPolicyContext, needsStoreOverview, needsProductGuidance].filter(
-			Boolean,
-		).length > 1;
+	const contextCount = [
+		needsPolicyContext,
+		needsStoreOverview,
+		needsProductContext,
+	].filter(Boolean).length;
 
-	if (needsPolicyContext && !needsShoppingContext) {
+	if (needsPolicyContext && !needsShoppingReply) {
 		const reply = await generatePolicyReply(message, history, personality);
 
 		return {
@@ -62,7 +64,7 @@ const handleShoppingAssistantMessage = async ({
 		};
 	}
 
-	if (!needsShoppingContext) {
+	if (!needsShoppingReply) {
 		return {
 			success: true,
 			message:
@@ -72,7 +74,7 @@ const handleShoppingAssistantMessage = async ({
 	}
 
 	let products: Item[] = [];
-	if (needsProductGuidance && needsProductRetrieval) {
+	if (needsProductRetrieval) {
 		products = await getRelevantProductsForMessage(
 			classification.rewrittenQuery || message,
 		);
@@ -83,13 +85,13 @@ const handleShoppingAssistantMessage = async ({
 		: undefined;
 
 	let reply: string | null;
-	if (needsMultiContextReply) {
+	if (contextCount > 1) {
 		reply = await generateCombinedReply({
 			message,
 			history,
 			products,
 			personality,
-			includeProductContext: needsProductGuidance,
+			includeProductContext: needsProductContext,
 			includePolicyContext: needsPolicyContext,
 			storeOverviewSummary,
 		});

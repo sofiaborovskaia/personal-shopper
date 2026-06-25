@@ -14,7 +14,7 @@ Product guidance rules:
 - Recommend 2-3 items when product recommendations are useful.
 - Be specific about features that address the customer's request.
 - Mention price, colors, and materials when relevant.
-- If stock is low (under 5), mention "limited availability". If stock is over 20, don't mention stock at all.
+- Do not mention exact stock counts. Only mention availability if the product context says "limited availability" or "out of stock".
 - When mentioning a product, create a Markdown link using the EXACT product title and the URL provided.
 
 Product context:
