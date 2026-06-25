@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
 	clearSavedPersonality,
@@ -127,9 +127,7 @@ export default function PersonalityBuilderPage() {
 							</div>
 						</div>
 						<div
-							className={`${styles.previewMessage} ${
-								styles.assistantMessage
-							} ${
+							className={`${styles.previewMessage} ${styles.assistantMessage} ${
 								hasUnsavedChanges && !isGeneratingPreview
 									? styles.staleMessage
 									: ""
@@ -174,18 +172,31 @@ export default function PersonalityBuilderPage() {
 									<label htmlFor={slider.key}>{slider.leftLabel}</label>
 									<span>{slider.rightLabel}</span>
 								</div>
-								<input
-									id={slider.key}
-									type="range"
-									min="0"
-									max="100"
-									value={values[slider.key]}
-									aria-label={slider.ariaLabel}
-									onChange={(event) =>
-										updateValue(slider.key, Number(event.target.value))
+								<div
+									className={styles.sliderControl}
+									style={
+										{
+											"--slider-value": `${values[slider.key]}%`,
+										} as CSSProperties
 									}
-									className={styles.slider}
-								/>
+								>
+									<span className={styles.sliderTrack} aria-hidden="true">
+										<span className={styles.sliderFill} />
+									</span>
+									<span className={styles.sliderThumb} aria-hidden="true" />
+									<input
+										id={slider.key}
+										type="range"
+										min="0"
+										max="100"
+										value={values[slider.key]}
+										aria-label={slider.ariaLabel}
+										onChange={(event) =>
+											updateValue(slider.key, Number(event.target.value))
+										}
+										className={styles.slider}
+									/>
+								</div>
 							</div>
 						))}
 					</div>
