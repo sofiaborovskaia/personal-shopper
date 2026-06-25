@@ -204,7 +204,9 @@ export default function PersonalityBuilderPage() {
 					<div className={styles.actions}>
 						<button
 							type="button"
-							className="neonButton"
+							className={
+								hasUnsavedChanges ? "neonPulseButton" : "neonButton"
+							}
 							onClick={applyPersonality}
 							disabled={isGeneratingPreview}
 						>
