@@ -4,10 +4,6 @@
 	bottom: 40px;
 	right: 40px;
 
-	width: 90px;
-	height: 90px;
-	border-radius: 50%;
-
 	background: transparent;
 	color: var(--magenta-2);
 
@@ -17,8 +13,6 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	flex-direction: column;
-	gap: 4px;
 
 	transition: all 0.3s ease;
 	z-index: 1000;
@@ -29,6 +23,23 @@
 	filter: drop-shadow(0 0 0.5rem white);
 }
 
+.floatingButton:hover .buttonText,
+.floatingButton:focus-visible .buttonText {
+	opacity: 1;
+	transform: translate(-10px, 10px) rotate(-10deg);
+}
+
+.floatingButton:hover .buttonBubble,
+.floatingButton:focus-visible .buttonBubble {
+	transform: translate(-2px, -4px) rotate(2deg);
+}
+
+.floatingButton:focus-visible {
+	outline: 2px solid var(--magenta-2);
+	outline-offset: 8px;
+	border-radius: 999px;
+}
+
 .floatingButtonHidden {
 	transform: scale(0);
 	opacity: 0;
@@ -36,14 +47,38 @@
 }
 
 .buttonText {
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 44px;
-	font-size: 0.8rem;
-	color: var(--grey-1);
-	letter-spacing: -0.05em;
-	transition: all 0.3s ease;
+	padding: 0.48rem 0.78rem;
+
+	color: var(--white);
+	font-size: 0.78rem;
+	/* font-weight: 700; */
+	line-height: 1;
+	opacity: 0;
+	transform: translate(10px, -2px) rotate(-5deg);
+	transition:
+		opacity 0.24s ease,
+		transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+	white-space: nowrap;
+	pointer-events: none;
+	letter-spacing: 1.2;
+}
+
+.buttonBubble {
+	width: 76px;
+	height: 76px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	filter: drop-shadow(0 0 0.2rem white);
+	transition:
+		transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+		filter 0.24s ease;
+}
+
+.buttonBubble svg {
+	width: 100%;
+	height: 100%;
 }
 
 /* Chat Window */

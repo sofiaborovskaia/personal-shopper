@@ -1,0 +1,144 @@
+.eyeIcon {
+	overflow: visible;
+}
+
+.eyeShape {
+	fill: var(--white);
+	stroke: rgba(245, 245, 245, 0.8);
+	stroke-width: 1;
+	filter: drop-shadow(0 0 0.18rem white);
+	transform: scaleY(0.18);
+	transform-box: fill-box;
+	transform-origin: center;
+	transition:
+		transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
+		filter 0.24s ease;
+}
+
+.eyeGaze {
+	opacity: 0;
+	transform: scale(0.35);
+	transform-box: fill-box;
+	transform-origin: center;
+	transition:
+		opacity 0.2s ease,
+		transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.eyePupilGlow {
+	fill: rgba(255, 129, 242, 0.16);
+	filter:
+		drop-shadow(0 0 0.1rem rgba(255, 129, 242, 0.45))
+		drop-shadow(0 0 0.18rem rgba(255, 255, 255, 0.22));
+}
+
+.eyePupil {
+	fill: var(--grey-1);
+}
+
+.eyeSparkle {
+	fill: var(--white);
+	opacity: 0;
+	transform: scale(0.25);
+	transform-box: fill-box;
+	transform-origin: center;
+	transition:
+		opacity 0.18s ease 0.08s,
+		transform 0.28s cubic-bezier(0.22, 1, 0.36, 1) 0.08s;
+}
+
+.eyeClosedLine {
+	fill: none;
+	stroke: var(--white);
+	stroke-width: 3;
+	filter: drop-shadow(0 0 0.14rem white);
+	opacity: 1;
+	transition: opacity 0.18s ease;
+}
+
+/* Eye looking animation */
+@keyframes lookAround {
+	0% {
+		transform: translate(0, 0) scale(1);
+	}
+	25% {
+		transform: translate(0, 0) scale(1);
+	}
+	39% {
+		transform: translate(5px, 1px) scale(1);
+	}
+	52% {
+		transform: translate(5px, 1px) scale(1);
+	}
+	67% {
+		transform: translate(-5px, 0) scale(1);
+	}
+	80% {
+		transform: translate(-5px, 0) scale(1);
+	}
+	92% {
+		transform: translate(0, 0) scale(1);
+	}
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+}
+
+@keyframes sparkleFollow {
+	0% {
+		transform: translate(0, 0) scale(1);
+	}
+	25% {
+		transform: translate(0, 0) scale(1);
+	}
+	39% {
+		transform: translate(1.4px, 0.3px) scale(1);
+	}
+	52% {
+		transform: translate(1.4px, 0.3px) scale(1);
+	}
+	67% {
+		transform: translate(-1.2px, 0) scale(1);
+	}
+	80% {
+		transform: translate(-1.2px, 0) scale(1);
+	}
+	92% {
+		transform: translate(0, 0) scale(1);
+	}
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+}
+
+/* Hover state */
+.hovered .eyeShape {
+	filter: drop-shadow(0 0 0.26rem white);
+	transform: scaleY(1);
+}
+
+.hovered .eyeGaze {
+	opacity: 1;
+	transform: scale(1);
+	animation: lookAround 8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+
+.hovered .eyeSparkle {
+	opacity: 1;
+	transform: scale(1);
+	animation: sparkleFollow 8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+
+.hovered .eyeClosedLine {
+	opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hovered .eyeGaze {
+		animation: none;
+	}
+
+	.hovered .eyeSparkle {
+		animation: none;
+	}
+}

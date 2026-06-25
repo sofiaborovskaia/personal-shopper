@@ -6,6 +6,7 @@ import styles from "./FloatingChatWidget.module.css";
 import type { Message } from "./FloatingChatWidget.types";
 import { sendChatMessage } from "@/app/actions/chat";
 import { readSavedPersonality } from "@/lib/personality";
+import { EyeIcon } from "./EyeIcon";
 
 export default function FloatingChatWidget() {
 	const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,7 @@ export default function FloatingChatWidget() {
 	const [input, setInput] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [showSlowMessage, setShowSlowMessage] = useState(false);
+	const [isHovered, setIsHovered] = useState(false);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -216,22 +218,19 @@ export default function FloatingChatWidget() {
 			{/* Floating Button */}
 			<button
 				onClick={() => setIsOpen(!isOpen)}
+				onMouseEnter={() => setIsHovered(true)}
+				onMouseLeave={() => setIsHovered(false)}
+				onFocus={() => setIsHovered(true)}
+				onBlur={() => setIsHovered(false)}
 				className={`${styles.floatingButton} ${
 					isOpen ? styles.floatingButtonHidden : ""
 				}`}
 				aria-label="Open chat"
 			>
-				<svg
-					width="100%"
-					height="100%"
-					viewBox="0 0 24 24"
-					fill="white"
-					strokeLinecap="round"
-					strokeLinejoin="round"
-				>
-					<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-				</svg>
-				<span className={styles.buttonText}>Ask me!</span>
+				<span className={styles.buttonText}>[ask me]</span>
+				<span className={styles.buttonBubble} aria-hidden="true">
+					<EyeIcon isHovered={isHovered} />
+				</span>
 			</button>
 		</>
 	);
