@@ -2,6 +2,7 @@ import checkMessageModeration from "@/lib/ai/checkMessageModeration";
 import classifyShoppingNeed from "@/lib/ai/classifyShoppingNeed";
 import formatStoreOverviewSummary from "@/lib/ai/formatStoreOverviewSummary";
 import generateCombinedReply from "@/lib/ai/generateCombinedReply";
+import generateGeneralReply from "@/lib/ai/generateGeneralReply";
 import generatePolicyReply from "@/lib/ai/generatePolicyReply";
 import generateProductReply from "@/lib/ai/generateProductReply";
 import generateStoreOverviewReply from "@/lib/ai/generateStoreOverviewReply";
@@ -65,10 +66,15 @@ const handleShoppingAssistantMessage = async ({
 	}
 
 	if (!needsShoppingReply) {
+		const reply = await generateGeneralReply({
+			message,
+			history,
+			personality,
+		});
+
 		return {
 			success: true,
-			message:
-				"I can help with clothing in our store, including product recommendations, comparisons, sizing, shipping, and returns.",
+			message: reply,
 			needs: classification.needs,
 		};
 	}
