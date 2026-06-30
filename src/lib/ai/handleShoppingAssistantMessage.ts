@@ -1,16 +1,10 @@
 import checkMessageModeration from "@/lib/ai/checkMessageModeration";
+import { buildShoppingAssistantContext } from "@/lib/ai/buildShoppingAssistantContext";
 import classifyShoppingNeed from "@/lib/ai/classifyShoppingNeed";
-import formatStoreOverviewSummary from "@/lib/ai/formatStoreOverviewSummary";
-import generateCombinedReply from "@/lib/ai/generateCombinedReply";
-import generateGeneralReply from "@/lib/ai/generateGeneralReply";
-import generatePolicyReply from "@/lib/ai/generatePolicyReply";
-import generateProductReply from "@/lib/ai/generateProductReply";
-import generateStoreOverviewReply from "@/lib/ai/generateStoreOverviewReply";
-import getRelevantProductsForMessage from "@/lib/ai/getRelevantProductsForMessage";
-import { getCategories } from "@/lib/categories";
+import generateShoppingAssistantReply from "@/lib/ai/generateShoppingAssistantReply";
+import { buildShoppingAssistantPrompt } from "@/lib/prompts/shopping-assistant-context";
 import type { PersonalityValues } from "@/lib/personality";
 import type { ChatMessage } from "@/types/chat";
-import type { Item } from "@prisma/client";
 
 const handleShoppingAssistantMessage = async ({
 	message,
@@ -31,91 +25,20 @@ const handleShoppingAssistantMessage = async ({
 	}
 
 	// Decide what context/actions the assistant needs before answering.
-	const classification = await classifyShoppingNeed({ message, history });
-	const needs = classification.needs;
-	const needsPolicyContext = needs.includes("policy_context");
-	const needsStoreOverview = needs.includes("store_overview");
-	const needsProductRetrieval = needs.includes("product_retrieval");
-	const needsPreviousProductContext = needs.includes(
-		"previous_product_context",
+	const classification = await classifyShoppingNeed({
+		message,
+		history: history.slice(-6),
+	});
+	const context = await buildShoppingAssistantContext({
+		message,
+		classification,
+	});
+	const reply = await generateShoppingAssistantReply(
+		message,
+		history.slice(-10),
+		buildShoppingAssistantPrompt(context),
+		personality,
 	);
-	const needsStyleAdvice = needs.includes("conversational_style_advice");
-	const needsClarification = needs.includes("clarification");
-
-	const needsProductContext =
-		needsProductRetrieval || needsPreviousProductContext;
-	const needsShoppingReply =
-		needsStoreOverview ||
-		needsProductContext ||
-		needsStyleAdvice ||
-		needsClarification;
-	const contextCount = [
-		needsPolicyContext,
-		needsStoreOverview,
-		needsProductContext,
-	].filter(Boolean).length;
-
-	if (needsPolicyContext && !needsShoppingReply) {
-		const reply = await generatePolicyReply(message, history, personality);
-
-		return {
-			success: true,
-			message: reply,
-			needs: classification.needs,
-		};
-	}
-
-	if (!needsShoppingReply) {
-		const reply = await generateGeneralReply({
-			message,
-			history,
-			personality,
-		});
-
-		return {
-			success: true,
-			message: reply,
-			needs: classification.needs,
-		};
-	}
-
-	let products: Item[] = [];
-	if (needsProductRetrieval) {
-		products = await getRelevantProductsForMessage(
-			classification.rewrittenQuery || message,
-		);
-	}
-
-	const storeOverviewSummary = needsStoreOverview
-		? formatStoreOverviewSummary(await getCategories())
-		: undefined;
-
-	let reply: string | null;
-	if (contextCount > 1) {
-		reply = await generateCombinedReply({
-			message,
-			history,
-			products,
-			personality,
-			includeProductContext: needsProductContext,
-			includePolicyContext: needsPolicyContext,
-			storeOverviewSummary,
-		});
-	} else if (needsStoreOverview && storeOverviewSummary) {
-		reply = await generateStoreOverviewReply({
-			message,
-			history,
-			personality,
-			storeOverviewSummary,
-		});
-	} else {
-		reply = await generateProductReply({
-			message,
-			history,
-			personality,
-			products,
-		});
-	}
 
 	return {
 		success: true,

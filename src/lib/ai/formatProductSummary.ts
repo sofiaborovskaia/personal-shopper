@@ -23,7 +23,7 @@ function formatAvailability(item: Item) {
 
 const formatProductSummary = (items: Item[]) => {
 	if (items.length === 0) {
-		return "No new products were retrieved for this turn. Use the conversation history to answer about previously discussed products, and do not invent new products.";
+		return "No products currently match this request.";
 	}
 
 	return items

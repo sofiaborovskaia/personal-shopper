@@ -13,13 +13,3 @@ Sizing and payments:
 - Customers can ask for size guidance based on fit preferences.
 - The store accepts major cards and common digital wallets.
 `.trim();
-
-export function getPolicyPrompt(): string {
-	return `You are a helpful personal shopping assistant for a clothing store.
-
-Answer the customer's policy question using only the store policies below.
-If the policy does not answer the question, say that you do not have that detail yet and offer to help with products.
-
-Store policies:
-${STORE_POLICY_SUMMARY}`;
-}

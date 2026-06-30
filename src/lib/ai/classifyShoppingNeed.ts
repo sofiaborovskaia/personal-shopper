@@ -64,8 +64,6 @@ const classifyShoppingNeed = async ({
 	message: string;
 	history: ChatMessage[];
 }): Promise<ShoppingNeedClassification> => {
-	const recentHistory = history.slice(-6);
-
 	const completion = await openai.chat.completions.create({
 		model: "gpt-4o-mini",
 		response_format: { type: "json_object" },
@@ -78,7 +76,7 @@ const classifyShoppingNeed = async ({
 				role: "user",
 				content: JSON.stringify({
 					latestMessage: message,
-					recentHistory,
+					recentHistory: history,
 				}),
 			},
 		],
