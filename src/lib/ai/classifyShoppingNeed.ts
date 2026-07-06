@@ -57,6 +57,49 @@ function normalizeClassification(value: unknown): ShoppingNeedClassification {
 	};
 }
 
+const shoppingNeedResponseFormat = {
+	type: "json_schema" as const,
+	name: "shopping_need_classification",
+	strict: true,
+	schema: {
+		type: "object",
+		additionalProperties: false,
+		properties: {
+			needs: {
+				type: "array",
+				items: {
+					type: "string",
+					enum: SHOPPING_NEEDS,
+				},
+			},
+			confidence: {
+				type: "number",
+				minimum: 0,
+				maximum: 1,
+			},
+			rewrittenQuery: {
+				type: ["string", "null"],
+			},
+			referencedProducts: {
+				type: "array",
+				items: {
+					type: "string",
+				},
+			},
+			reason: {
+				type: ["string", "null"],
+			},
+		},
+		required: [
+			"needs",
+			"confidence",
+			"rewrittenQuery",
+			"referencedProducts",
+			"reason",
+		],
+	},
+};
+
 const classifyShoppingNeed = async ({
 	message,
 	history,
@@ -64,26 +107,20 @@ const classifyShoppingNeed = async ({
 	message: string;
 	history: ChatMessage[];
 }): Promise<ShoppingNeedClassification> => {
-	const completion = await openai.chat.completions.create({
+	const response = await openai.responses.create({
 		model: "gpt-4o-mini",
-		response_format: { type: "json_object" },
-		messages: [
-			{
-				role: "system",
-				content: getClassifyShoppingNeedPrompt(),
-			},
-			{
-				role: "user",
-				content: JSON.stringify({
-					latestMessage: message,
-					recentHistory: history,
-				}),
-			},
-		],
+		instructions: getClassifyShoppingNeedPrompt(),
+		input: JSON.stringify({
+			latestMessage: message,
+			recentHistory: history,
+		}),
+		text: {
+			format: shoppingNeedResponseFormat,
+		},
 		temperature: 0,
 	});
 
-	const content = completion.choices[0].message.content;
+	const content = response.output_text;
 	console.log("shopping needs", content);
 	if (!content) {
 		return { needs: ["product_retrieval"], confidence: 0.4 };

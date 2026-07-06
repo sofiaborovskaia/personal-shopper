@@ -13,12 +13,10 @@ export const SHOPPING_NEEDS: ShoppingNeed[] = [
 export function getClassifyShoppingNeedPrompt(): string {
 	return `You decide what context or actions a clothing store shopping assistant needs before answering.
 
-Return only a JSON object with:
-- needs: array containing one or more of ${SHOPPING_NEEDS.join(", ")}
-- confidence: number from 0 to 1
-- rewrittenQuery: a standalone product search query when product_retrieval is useful
-- referencedProducts: product names mentioned or clearly referred to, when available
-- reason: brief explanation for developers
+Choose one or more needs from: ${SHOPPING_NEEDS.join(", ")}.
+Use rewrittenQuery for a standalone product search query when product_retrieval is useful.
+Use referencedProducts for product names mentioned or clearly referred to, when available.
+Use reason for a brief developer-facing explanation of the classification.
 
 Need definitions:
 - product_retrieval: a fresh product search, refined product search, comparison, or product question would benefit from retrieving products.
@@ -49,5 +47,5 @@ Examples:
 - "What do you sell?" => ["store_overview"]
 - "Who won the game?" => ["unsupported_redirect"]
 
-Do not answer the customer. Do not include markdown.`;
+Do not answer the customer.`;
 }

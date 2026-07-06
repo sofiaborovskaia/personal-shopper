@@ -18,30 +18,22 @@ export async function generatePersonalityPreview(personality: unknown) {
 	}
 
 	try {
-		const completion = await openai.chat.completions.create({
+		const response = await openai.responses.create({
 			model: "gpt-4o-mini",
-			messages: [
-				{
-					role: "system",
-					content: `${getAssistantPersonalityPrompt(values)}
+			instructions: `${getAssistantPersonalityPrompt(values)}
 
 You are generating a short preview answer for the shopping assistant personality builder.
 Do not search products, mention exact inventory, quote policies, include links, or invent prices.
 Answer the user in 1-2 short sentences. Make the personality obvious.`,
-				},
-				{
-					role: "user",
-					content: personalityPreviewUserMessage,
-				},
-			],
+			input: personalityPreviewUserMessage,
 			temperature: 0.9,
-			max_tokens: 120,
+			max_output_tokens: 120,
 		});
 
 		return {
 			success: true,
 			message:
-				completion.choices[0].message.content?.trim() ||
+				response.output_text.trim() ||
 				"I can help you shape something easy but memorable.",
 		};
 	} catch (error) {

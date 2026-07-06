@@ -14,14 +14,14 @@ const generateShoppingAssistantReply = async (
 		? `${systemMessage}\n\n${personalityPrompt}`
 		: systemMessage;
 
-	const completion = await openai.chat.completions.create({
+	const response = await openai.responses.create({
 		model: "gpt-4o-mini",
-		messages: [
-			{
-				role: "system",
-				content: composedSystemMessage,
-			},
-			...history,
+		instructions: composedSystemMessage,
+		input: [
+			...history.map((entry) => ({
+				role: entry.role,
+				content: entry.content,
+			})),
 			{
 				role: "user",
 				content: message,
@@ -30,8 +30,7 @@ const generateShoppingAssistantReply = async (
 		temperature: 0.7,
 	});
 
-	const aiResponse = completion.choices[0].message.content;
-	return aiResponse;
+	return response.output_text;
 };
 
 export default generateShoppingAssistantReply;

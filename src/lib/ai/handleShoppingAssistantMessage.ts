@@ -33,6 +33,7 @@ const handleShoppingAssistantMessage = async ({
 		message,
 		classification,
 	});
+	// Generate reply using context and personality
 	const reply = await generateShoppingAssistantReply(
 		message,
 		history.slice(-10),
